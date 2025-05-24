@@ -118,25 +118,27 @@ author:
   bio              : "just realized pentesting is fun"
   location         : "kwek kwek"
   email            : lanbuatkeje@gmail.com
+  
 links:
-    - label: "Email"
-    icon: "fas fa-fw fa-envelope-square"
-       #url: "mailto:lanbuatkeje@gmail.com"
-    - label: "Website"
-      icon: "fas fa-fw fa-link"
-      #url: "https://your-website.com"
-    - label: "Twitter"
-      icon: "fab fa-fw fa-twitter-square"
-      # url: "https://twitter.com/"
-    - label: "Facebook"
-      icon: "fab fa-fw fa-facebook-square"
-      # url: "https://facebook.com/"
-    - label: "GitHub"
-      icon: "fab fa-fw fa-github"
-       url: "https://github.com/171k"
-    - label: "Instagram"
-      icon: "fab fa-fw fa-instagram"
-      # url: "https://instagram.com/"
+  - label: "Email"
+    icon: "fas fa-fw fa-envelope-square"       # <-- fix: should be 4 spaces, not 7
+    url: "mailto:lanbuatkeje@gmail.com"
+  - label: "Website"
+    icon: "fas fa-fw fa-link"
+    #url: "https://your-website.com"
+  - label: "Twitter"
+    icon: "fab fa-fw fa-twitter-square"
+    # url: "https://twitter.com/"
+  - label: "Facebook"
+    icon: "fab fa-fw fa-facebook-square"
+    # url: "https://facebook.com/"
+  - label: "GitHub"
+    icon: "fab fa-fw fa-github"
+    url: "https://github.com/171k"               # <-- fix: indentation was off here, should be 4 spaces
+  - label: "Instagram"
+    icon: "fab fa-fw fa-instagram"
+    # url: "https://instagram.com/"
+
 
 # Site Footer
 footer:
