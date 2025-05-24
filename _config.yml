@@ -118,9 +118,9 @@ author:
   bio              : "just realized pentesting is fun"
   location         : "kwek kwek"
   email            : lanbuatkeje@gmail.com
-  links:
-    - label: "Email"
-      icon: "fas fa-fw fa-envelope-square"
+links:
+  - label: "Email"
+    icon: "fas fa-fw fa-envelope-square"
        url: "mailto:lanbuatkeje@gmail.com"
     - label: "Website"
       icon: "fas fa-fw fa-link"
