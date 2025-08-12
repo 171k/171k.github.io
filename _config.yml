@@ -1,0 +1,37 @@
+title: 171k
+email: lanbuatkeje@gmail.com
+description: "My space to post what I learn toward my journey"
+baseurl: "" # keep empty for root
+url: "https://171k.github.io"
+markdown: kramdown
+theme: null
+exclude: ["node_modules", "README.md"]
+
+collections:
+  ctf:
+    output: true
+    permalink: /ctf/:title/
+    output_ext: html
+  tools:
+    output: true
+    permalink: /tools/:title/
+
+keep_files: []
+include: ["_ctf/**/*", "assets/**/*", "**/*.ani", "**/*.cur"]
+
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "ctf"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "tools"
+    values:
+      layout: "default"

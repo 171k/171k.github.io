@@ -1,0 +1,156 @@
+<aside class="sidebar">
+    <div class="sidebar-section">
+        <h3>Home</h3>
+        <ul class="sidebar-list">
+            <li><a href="/">Home</a></li>
+        </ul>
+    </div>
+    <div class="sidebar-section">
+        <h3>Latest Quack</h3>
+        <ul class="sidebar-list">
+            {% assign posts_sorted = site.posts | sort: 'date' | reverse %}
+            {% for post in posts_sorted limit:3 %}
+            <li><a href="{{ post.url }}">{{ post.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="sidebar-section">
+
+        <div class="ctf-section">
+            <h3>CTF Writeups</h3>
+            
+            <!-- ICS 25 -->
+            <div class="ctf-group">
+                <div class="ctf-group-header" onclick="toggleCtfGroup('ics-25', this)">
+                    <span class="ctf-name">ICS 25</span>
+                    <span class="ctf-toggle">▶</span>
+                </div>
+                <div class="ctf-categories" id="ics-25" style="display: none;">
+                    <div class="ctf-category">
+                        <div class="category-header" onclick="toggleCategory('ics-25-misc', this)">
+                            <span class="category-name">Misc</span>
+                            <span class="category-toggle">▶</span>
+                        </div>
+                        <div class="challenge-list" id="ics-25-misc-challenges" style="display: none;">
+                            <div class="challenge-item">
+                                {% assign ics_item = site.ctf | where: "title", "ICS 2025" | first %}
+                                {% if ics_item %}
+                                    <a href="{{ ics_item.url }}" class="challenge-link">ICS 25</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ctf-category">
+                        <div class="category-header" onclick="toggleCategory('ics-25-crypto', this)">
+                            <span class="category-name">Crypto</span>
+                            <span class="category-toggle">▶</span>
+                        </div>
+                        <div class="challenge-list" id="ics-25-crypto-challenges" style="display: none;">
+                            <!-- Empty for now -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UMCS Prelim -->
+            <div class="ctf-group">
+                <div class="ctf-group-header" onclick="toggleCtfGroup('umcs-prelim', this)">
+                    <span class="ctf-name">UMCS Prelim</span>
+                    <span class="ctf-toggle">▶</span>
+                </div>
+                <div class="ctf-categories" id="umcs-prelim" style="display: none;">
+                    <div class="ctf-category">
+                        <div class="category-header" onclick="toggleCategory('umcs-prelim-forensic', this)">
+                            <span class="category-name">Forensic</span>
+                            <span class="category-toggle">▶</span>
+                        </div>
+                        <div class="challenge-list" id="umcs-prelim-forensic-challenges" style="display: none;">
+                            <div class="challenge-item">
+                                {% assign umcs_item = site.ctf | where: "title", "UMCS 2025" | first %}
+                                {% if umcs_item %}
+                                    <a href="{{ umcs_item.url }}" class="challenge-link">UMCS 2025</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ctf-category">
+                        <div class="category-header" onclick="toggleCategory('umcs-prelim-crypto', this)">
+                            <span class="category-name">Crypto</span>
+                            <span class="category-toggle">▶</span>
+                        </div>
+                        <div class="challenge-list" id="umcs-prelim-crypto-challenges" style="display: none;">
+                            <!-- Empty for now -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WGMY 24 -->
+            <div class="ctf-group">
+                <div class="ctf-group-header" onclick="toggleCtfGroup('wgmy-24', this)">
+                    <span class="ctf-name">Wargames MY 24</span>
+                    <span class="ctf-toggle">▶</span>
+                </div>
+                <div class="ctf-categories" id="wgmy-24" style="display: none;">
+                    <div class="ctf-category">
+                        <div class="category-header" onclick="toggleCategory('wgmy-24-crypto', this)">
+                            <span class="category-name">Crypto</span>
+                            <span class="category-toggle">▶</span>
+                        </div>
+                        <div class="challenge-list" id="wgmy-24-crypto-challenges" style="display: none;">
+                            <!-- Empty for now -->
+                        </div>
+                    </div>
+                    <div class="ctf-category">
+                        <div class="category-header" onclick="toggleCategory('wgmy-24-misc', this)">
+                            <span class="category-name">Misc</span>
+                            <span class="category-toggle">▶</span>
+                        </div>
+                        <div class="challenge-list" id="wgmy-24-misc-challenges" style="display: none;">
+                            <div class="challenge-item">
+                                {% assign wgmy_item = site.ctf | where: "title", "WGMY 24" | first %}
+                                {% if wgmy_item %}
+                                    <a href="{{ wgmy_item.url }}" class="challenge-link">WGMY 24</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar-section">
+        <h3>Tools I Use</h3>
+        <ul class="sidebar-list">
+            {% assign tools_sorted = site.tools | sort: 'title' %}
+            {% for t in tools_sorted limit:6 %}
+            <li><a href="{{ t.url }}">{{ t.title }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="sidebar-section">
+        <h3>Links</h3>
+        <ul class="sidebar-list">
+            <li><a href="#title">About Me</a></li>
+            <li><a href="/#contact">Contact</a></li>
+        </ul>
+    </div>
+</aside>
+
+<script>
+function toggleCtfGroup(groupId, headerEl) {
+  const categories = document.getElementById(groupId);
+  const toggleIcon = headerEl.querySelector('.ctf-toggle');
+  const isHidden = getComputedStyle(categories).display === 'none';
+  categories.style.display = isHidden ? 'block' : 'none';
+  if (toggleIcon) toggleIcon.textContent = isHidden ? '▼' : '▶';
+}
+
+function toggleCategory(categoryId, headerEl) {
+  const challenges = document.getElementById(categoryId + '-challenges');
+  const toggleIcon = headerEl.querySelector('.category-toggle');
+  const isHidden = getComputedStyle(challenges).display === 'none';
+  challenges.style.display = isHidden ? 'block' : 'none';
+  if (toggleIcon) toggleIcon.textContent = isHidden ? '▼' : '▶';
+}
+</script>

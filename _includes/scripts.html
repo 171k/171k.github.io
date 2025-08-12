@@ -1,0 +1,27 @@
+<script>
+    function toggleTheme() {
+        const body = document.body;
+        const themeToggle = document.querySelector('.theme-toggle');
+        
+        if (body.classList.contains('light-theme')) {
+            body.classList.remove('light-theme');
+            themeToggle.textContent = '🌙';
+            localStorage.setItem('theme', 'dark');
+        } else {
+            body.classList.add('light-theme');
+            themeToggle.textContent = '☀️';
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    // Load saved theme
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedTheme = localStorage.getItem('theme');
+        const themeToggle = document.querySelector('.theme-toggle');
+        
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+            themeToggle.textContent = '☀️';
+        }
+    });
+</script>
