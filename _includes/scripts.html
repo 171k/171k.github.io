@@ -1,0 +1,61 @@
+<script>
+    function toggleTheme() {
+        const body = document.body;
+        const themeToggle = document.querySelector('.theme-toggle');
+        
+        if (body.classList.contains('light-theme')) {
+            body.classList.remove('light-theme');
+            themeToggle.textContent = '🌙';
+            localStorage.setItem('theme', 'dark');
+        } else {
+            body.classList.add('light-theme');
+            themeToggle.textContent = '☀️';
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    function toggleSidebar() {
+        const body = document.body;
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        const burger = document.querySelector('.burger-toggle');
+        if (!sidebar || !overlay) return;
+        const open = sidebar.classList.toggle('sidebar-open');
+        overlay.classList.toggle('overlay-visible', open);
+        if (burger) burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        body.classList.toggle('nav-open', open);
+    }
+
+    function closeSidebar() {
+        const body = document.body;
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        const burger = document.querySelector('.burger-toggle');
+        if (sidebar) sidebar.classList.remove('sidebar-open');
+        if (overlay) overlay.classList.remove('overlay-visible');
+        if (burger) burger.setAttribute('aria-expanded', 'false');
+        body.classList.remove('nav-open');
+    }
+
+    // Load saved theme
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedTheme = localStorage.getItem('theme');
+        const themeToggle = document.querySelector('.theme-toggle');
+        
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+            themeToggle.textContent = '☀️';
+        }
+
+        // Close on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeSidebar();
+        });
+
+        // Close on any sidebar link click
+        document.addEventListener('click', function(e){
+            const link = e.target.closest('.sidebar a');
+            if (link) closeSidebar();
+        });
+    });
+</script>

@@ -1,0 +1,26 @@
+<header>
+    <div class="container">
+        <div class="logo">
+            <img src="/duck.png" alt="171k Profile" class="profile-img">
+            <div>
+                <h1>171k</h1>
+                <p class="tagline">My space to post what I earn toward my journey</p>
+            </div>
+        </div>
+        <div class="header-controls">
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+            <button class="burger-toggle" type="button" onclick="toggleSidebar()" aria-label="Open menu" aria-expanded="false">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="6" width="18" height="2" fill="currentColor"/>
+                    <rect x="3" y="11" width="18" height="2" fill="currentColor"/>
+                    <rect x="3" y="16" width="18" height="2" fill="currentColor"/>
+                </svg>
+            </button>
+            <form class="search-form" action="/search" method="get">
+                <input type="text" name="q" placeholder="Search..." aria-label="Search">
+                <button type="submit" aria-label="Search">🔍</button>
+            </form>
+        </div>
+    </div>
+</header>
+<div class="sidebar-overlay" onclick="closeSidebar()"></div>

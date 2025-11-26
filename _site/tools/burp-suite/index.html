@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burp Suite</title>
+    <link rel="stylesheet" href="/styles.css?v=6">
+    <link rel="icon" type="image/x-icon" href="../favicon.png">
+</head>
+<body>
+    <header>
+    <div class="container">
+        <div class="logo">
+            <img src="/duck.png" alt="171k Profile" class="profile-img">
+            <div>
+                <h1>171k</h1>
+                <p class="tagline">My space to post what I earn toward my journey</p>
+            </div>
+        </div>
+        <div class="header-controls">
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">🌙</button>
+            <button class="burger-toggle" type="button" onclick="toggleSidebar()" aria-label="Open menu" aria-expanded="false">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="6" width="18" height="2" fill="currentColor"/>
+                    <rect x="3" y="11" width="18" height="2" fill="currentColor"/>
+                    <rect x="3" y="16" width="18" height="2" fill="currentColor"/>
+                </svg>
+            </button>
+            <form class="search-form" action="/search" method="get">
+                <input type="text" name="q" placeholder="Search..." aria-label="Search">
+                <button type="submit" aria-label="Search">🔍</button>
+            </form>
+        </div>
+    </div>
+</header>
+<div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <aside class="sidebar">
+    <div class="sidebar-section">
+        <h3>Home</h3>
+        <ul class="sidebar-list">
+            <li><a href="/">Home</a></li>
+        </ul>
+    </div>
+    <div class="sidebar-section">
+        <h3>Latest Quack</h3>
+        <ul class="sidebar-list">
+            
+            
+            <li><a href="/blue%20team/workshop/2025/08/02/Cyberskills-level-up.html">Cyberskills Level Up</a></li>
+            
+            <li><a href="/booth/experience/2025/07/02/cydes-2025.html">Cydes 2025</a></li>
+            
+        </ul>
+    </div>
+    <div class="sidebar-section">
+
+        <div class="ctf-section">
+            <h3>CTF Writeups</h3>
+            
+            <!-- ICS 25 -->
+            <div class="ctf-group">
+                <div class="ctf-group-header" onclick="toggleCtfGroup('ics-25', this)">
+                    <span class="ctf-name">ICS 25</span>
+                    <span class="ctf-toggle">▶</span>
+                </div>
+                <div class="ctf-categories" id="ics-25" style="display: none;">
+                    <div class="ctf-category">
+                        <div class="category-header" onclick="toggleCategory('ics-25-misc', this)">
+                            <span class="category-name">Misc</span>
+                            <span class="category-toggle">▶</span>
+                        </div>
+                        <div class="challenge-list" id="ics-25-misc-challenges" style="display: none;">
+                            <div class="challenge-item">
+                                
+                                
+                                    <a href="/ctf/ICS/" class="challenge-link">ICS 25</a>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ctf-category">
+                        <div class="category-header" onclick="toggleCategory('ics-25-crypto', this)">
+                            <span class="category-name">Crypto</span>
+                            <span class="category-toggle">▶</span>
+                        </div>
+                        <div class="challenge-list" id="ics-25-crypto-challenges" style="display: none;">
+                            <!-- Empty for now -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UMCS Prelim -->
+            <div class="ctf-group">
+                <div class="ctf-group-header" onclick="toggleCtfGroup('umcs-prelim', this)">
+                    <span class="ctf-name">UMCS Prelim</span>
+                    <span class="ctf-toggle">▶</span>
+                </div>
+                <div class="ctf-categories" id="umcs-prelim" style="display: none;">
+                    <div class="ctf-category">
+                        <div class="category-header" onclick="toggleCategory('umcs-prelim-forensic', this)">
+                            <span class="category-name">Forensic</span>
+                            <span class="category-toggle">▶</span>
+                        </div>
+                        <div class="challenge-list" id="umcs-prelim-forensic-challenges" style="display: none;">
+                            <div class="challenge-item">
+                                
+                                
+                                    <a href="/ctf/UMCS/" class="challenge-link">UMCS 2025</a>
+                                
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ctf-category">
+                        <div class="category-header" onclick="toggleCategory('umcs-prelim-crypto', this)">
+                            <span class="category-name">Crypto</span>
+                            <span class="category-toggle">▶</span>
+                        </div>
+                        <div class="challenge-list" id="umcs-prelim-crypto-challenges" style="display: none;">
+                            <!-- Empty for now -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WGMY 24 -->
+            <div class="ctf-group">
+                <div class="ctf-group-header" onclick="toggleCtfGroup('wgmy-24', this)">
+                    <span class="ctf-name">Wargames MY 24</span>
+                    <span class="ctf-toggle">▶</span>
+                </div>
+                <div class="ctf-categories" id="wgmy-24" style="display: none;">
+                    <div class="ctf-category">
+                        <div class="category-header" onclick="toggleCategory('wgmy-24-crypto', this)">
+                            <span class="category-name">Crypto</span>
+                            <span class="category-toggle">▶</span>
+                        </div>
+                        <div class="challenge-list" id="wgmy-24-crypto-challenges" style="display: none;">
+                            <!-- Empty for now -->
+                        </div>
+                    </div>
+                    <div class="ctf-category">
+                        <div class="category-header" onclick="toggleCategory('wgmy-24-misc', this)">
+                            <span class="category-name">Misc</span>
+                            <span class="category-toggle">▶</span>
+                        </div>
+                        <div class="challenge-list" id="wgmy-24-misc-challenges" style="display: none;">
+                            <div class="challenge-item">
+                                
+                                
+                                    <a href="/ctf/WGMY/" class="challenge-link">WGMY 24</a>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar-section">
+        <h3>Tools I Use</h3>
+        <ul class="sidebar-list">
+            
+            
+            <li><a href="/tools/apktool/">Apktool</a></li>
+            
+            <li><a href="/tools/burp-suite/">Burp Suite</a></li>
+            
+            <li><a href="/tools/wireshark/">Wireshark</a></li>
+            
+        </ul>
+    </div>
+    <div class="sidebar-section">
+        <h3>Links</h3>
+        <ul class="sidebar-list">
+            <li><a href="#title">About Me</a></li>
+            <li><a href="/#contact">Contact</a></li>
+        </ul>
+    </div>
+</aside>
+
+<script>
+function toggleCtfGroup(groupId, headerEl) {
+  const categories = document.getElementById(groupId);
+  const toggleIcon = headerEl.querySelector('.ctf-toggle');
+  const isHidden = getComputedStyle(categories).display === 'none';
+  categories.style.display = isHidden ? 'block' : 'none';
+  if (toggleIcon) toggleIcon.textContent = isHidden ? '▼' : '▶';
+}
+
+function toggleCategory(categoryId, headerEl) {
+  const challenges = document.getElementById(categoryId + '-challenges');
+  const toggleIcon = headerEl.querySelector('.category-toggle');
+  const isHidden = getComputedStyle(challenges).display === 'none';
+  challenges.style.display = isHidden ? 'block' : 'none';
+  if (toggleIcon) toggleIcon.textContent = isHidden ? '▼' : '▶';
+}
+</script>
+
+
+    <main class="main-content">
+        <p>Burp.</p>
+
+    </main>
+
+    <script>
+    function toggleTheme() {
+        const body = document.body;
+        const themeToggle = document.querySelector('.theme-toggle');
+        
+        if (body.classList.contains('light-theme')) {
+            body.classList.remove('light-theme');
+            themeToggle.textContent = '🌙';
+            localStorage.setItem('theme', 'dark');
+        } else {
+            body.classList.add('light-theme');
+            themeToggle.textContent = '☀️';
+            localStorage.setItem('theme', 'light');
+        }
+    }
+
+    function toggleSidebar() {
+        const body = document.body;
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        const burger = document.querySelector('.burger-toggle');
+        if (!sidebar || !overlay) return;
+        const open = sidebar.classList.toggle('sidebar-open');
+        overlay.classList.toggle('overlay-visible', open);
+        if (burger) burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        body.classList.toggle('nav-open', open);
+    }
+
+    function closeSidebar() {
+        const body = document.body;
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.sidebar-overlay');
+        const burger = document.querySelector('.burger-toggle');
+        if (sidebar) sidebar.classList.remove('sidebar-open');
+        if (overlay) overlay.classList.remove('overlay-visible');
+        if (burger) burger.setAttribute('aria-expanded', 'false');
+        body.classList.remove('nav-open');
+    }
+
+    // Load saved theme
+    document.addEventListener('DOMContentLoaded', function() {
+        const savedTheme = localStorage.getItem('theme');
+        const themeToggle = document.querySelector('.theme-toggle');
+        
+        if (savedTheme === 'light') {
+            document.body.classList.add('light-theme');
+            themeToggle.textContent = '☀️';
+        }
+
+        // Close on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeSidebar();
+        });
+
+        // Close on any sidebar link click
+        document.addEventListener('click', function(e){
+            const link = e.target.closest('.sidebar a');
+            if (link) closeSidebar();
+        });
+    });
+</script>
+
+</body>
+</html>
