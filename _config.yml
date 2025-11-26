@@ -10,9 +10,8 @@ exclude: ["node_modules", "README.md"]
 collections:
   ctf:
     output: true
-    permalink: /ctf/:ctf_event/:ctf_category/:title/
+    permalink: /ctf/:name/
     output_ext: html
-    # Note: ctf_event and ctf_category should be URL-friendly (no spaces recommended)
   tools:
     output: true
     permalink: /tools/:title/
