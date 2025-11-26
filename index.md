@@ -10,7 +10,7 @@ title: welcome, duckies!
     <h2>🦆 Who Quacked This?</h2>
     <p>Qwack! I'm <strong>171k</strong>, a beginner cybersecurity enthusiast trying to dip my legs into the world of cybersecurity. I am still learning and trying my best to be better so please be nice to me hehe</p>
 
-    <p>🎯 <strong>Current Focus:</strong> Web exploitation and Mobile hacking</p>
+    <p>🎯 <strong>Current Focus:</strong> Digital Forensics and Mobile Hacking</p>
     <p>🏆 <strong>CTF Teams:</strong> Member of UiTM Cyberheroes Club Team</p>
 </div>
 
