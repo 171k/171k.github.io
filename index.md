@@ -12,6 +12,7 @@ title: welcome, duckies!
 
     <p>🎯 <strong>Current Focus:</strong> Digital Forensics and Mobile Hacking</p>
     <p>🏆 <strong>CTF Teams:</strong> Member of UiTM Cyberheroes Club Team</p>
+    <p> For Writeups, I only do Forensics and Reverse Engineering Writeup unless requested to do something else!</p>
 </div>
 
 <hr class="section-divider" />
