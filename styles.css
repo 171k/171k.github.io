@@ -225,6 +225,32 @@ header {
     max-width: 100%;
 }
 
+/* Custom vertical scrollbar for main content - Dark theme */
+.main-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.main-content::-webkit-scrollbar-track {
+    background: #0d0f10;
+    border-radius: 4px;
+}
+
+.main-content::-webkit-scrollbar-thumb {
+    background: #4cd137; /* Green thumb */
+    border-radius: 4px;
+    border: 1px solid #0d0f10;
+}
+
+.main-content::-webkit-scrollbar-thumb:hover {
+    background: #72dec2; /* Mint on hover */
+}
+
+/* Firefox scrollbar for main content */
+.main-content {
+    scrollbar-width: thin;
+    scrollbar-color: #4cd137 #0d0f10;
+}
+
 /* Markdown Content Styling - Theme Matched */
 .main-content > *:first-child {
     margin-top: 0;
@@ -530,6 +556,24 @@ body.light-theme .main-content td {
 
 body.light-theme .main-content tr:nth-child(even) {
     background-color: #f9fafb;
+}
+
+/* Custom vertical scrollbar for main content - Light theme */
+body.light-theme .main-content::-webkit-scrollbar-track {
+    background: #ffffff;
+}
+
+body.light-theme .main-content::-webkit-scrollbar-thumb {
+    background: #f59e0b; /* Yellow thumb */
+    border-color: #ffffff;
+}
+
+body.light-theme .main-content::-webkit-scrollbar-thumb:hover {
+    background: #fbbf24; /* Lighter yellow on hover */
+}
+
+body.light-theme .main-content {
+    scrollbar-color: #f59e0b #ffffff;
 }
 
 .sidebar-section {
