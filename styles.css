@@ -293,6 +293,7 @@ header {
     background: none;
     color: #4cd137; /* Green color for code - matches theme */
     padding: 0;
+    border: none; /* No border for code inside pre */
     border-radius: 0;
     font-size: inherit;
 }
@@ -425,6 +426,8 @@ body.light-theme .main-content pre {
 
 body.light-theme .main-content pre code {
     color: #d97706; /* Darker yellow for code */
+    border: none; /* No border for code inside pre */
+    background: none;
 }
 
 body.light-theme .main-content code {
