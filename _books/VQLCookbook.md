@@ -18,7 +18,7 @@ A practical reference for **Velociraptor VQL queries** used in DFIR and threat h
 - Format:
 
 ```vql
-SELECT field1, field2 FROM source() WHERE condition
+`SELECT field1, field2 FROM source() WHERE condition`
 ```
 
 - Each query can be **an artifact** (reusable module).
@@ -34,7 +34,7 @@ SELECT field1, field2 FROM source() WHERE condition
 | `SELECT Name, Pid, Cmdline FROM pslist()`              | List all running processes         |
 | `SELECT * FROM pslist() WHERE Cmdline =~ "powershell"` | Find PowerShell processes          |
 | `SELECT * FROM pslist() WHERE Exe =~ "mimikatz"`       | Detect Mimikatz execution          |
-| `SELECT * FROM pslist() WHERE Cmdline =~ "nc           | netcat                             |
+| `SELECT * FROM pslist() WHERE Cmdline =~ "nc`          | netcat                             |
 | `SELECT * FROM pslist() WHERE Ppid = 4`                | Orphan processes, possible malware |
 
 ### 2. Network Connections
@@ -83,6 +83,7 @@ SELECT field1, field2 FROM source() WHERE condition
 | `SELECT * FROM filelist(globs="/etc/cron*")`   | Scheduled jobs     |
 
 ---
+
 
 
 
