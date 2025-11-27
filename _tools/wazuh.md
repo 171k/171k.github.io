@@ -1,3 +1,8 @@
+---
+title: "Wazuh Startup!"
+date: 2024-11-20
+---
+
 # Wazuh!
 
 Quick reference for using Wazuh for security monitoring and SIEM!
@@ -281,3 +286,4 @@ grep "rule.id" alerts.json | sort | uniq -c | sort -nr
 ---
 
 This is just part of the things I learnt maybe I'll add more in the future!
+
