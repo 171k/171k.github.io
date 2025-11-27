@@ -15,6 +15,9 @@ collections:
   tools:
     output: true
     permalink: /tools/:title/
+  books:
+    output: true
+    permalink: /books/:title/
 
 keep_files: []
 include: ["_ctf/**/*", "assets/**/*", "**/*.ani", "**/*.cur"]
@@ -36,5 +39,10 @@ defaults:
   - scope:
       path: ""
       type: "tools"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "books"
     values:
       layout: "default"
