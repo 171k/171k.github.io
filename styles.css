@@ -275,23 +275,23 @@ header {
     margin-bottom: 1rem;
 }
 
-/* Code blocks - Terminal style with green border */
+/* Code blocks - Terminal style without border */
 .main-content pre {
     background-color: #0a0c0d; /* Dark terminal background */
-    border: 1px solid #4cd137; /* Green border */
-    border-radius: 4px;
+    border: none; /* No border */
+    border-radius: 0;
     padding: 1rem;
     overflow-x: auto;
     margin: 1rem 0;
     font-family: 'Space Mono', monospace;
     font-size: 0.9rem;
     line-height: 1.5;
-    box-shadow: 0 0 10px rgba(76, 209, 55, 0.2);
+    box-shadow: none;
 }
 
 .main-content pre code {
     background: none;
-    color: #4cd137;
+    color: #4cd137; /* Green color for code - matches theme */
     padding: 0;
     border-radius: 0;
     font-size: inherit;
@@ -419,8 +419,8 @@ body.light-theme .main-content p {
 
 body.light-theme .main-content pre {
     background-color: #f7fafc;
-    border-color: #f59e0b; /* Yellow border */
-    box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+    border: none; /* No border */
+    box-shadow: none;
 }
 
 body.light-theme .main-content pre code {
