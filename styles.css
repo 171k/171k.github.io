@@ -289,6 +289,33 @@ header {
     box-shadow: 0 0 10px rgba(76, 209, 55, 0.2);
 }
 
+/* Custom horizontal scrollbar for code blocks - Dark theme */
+.main-content pre::-webkit-scrollbar {
+    height: 8px;
+}
+
+.main-content pre::-webkit-scrollbar-track {
+    background: #0a0c0d;
+    border-radius: 4px;
+    border: 1px solid #2d3748;
+}
+
+.main-content pre::-webkit-scrollbar-thumb {
+    background: #4cd137; /* Green thumb */
+    border-radius: 4px;
+    border: 1px solid #0a0c0d;
+}
+
+.main-content pre::-webkit-scrollbar-thumb:hover {
+    background: #72dec2; /* Mint on hover */
+}
+
+/* Firefox scrollbar for code blocks */
+.main-content pre {
+    scrollbar-width: thin;
+    scrollbar-color: #4cd137 #0a0c0d;
+}
+
 .main-content pre code {
     background: none;
     color: #4cd137; /* Green color for code - matches theme */
@@ -422,6 +449,25 @@ body.light-theme .main-content pre {
     background-color: #f7fafc;
     border-color: #f59e0b; /* Yellow border */
     box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+}
+
+/* Custom horizontal scrollbar for code blocks - Light theme */
+body.light-theme .main-content pre::-webkit-scrollbar-track {
+    background: #f7fafc;
+    border-color: #e5e7eb;
+}
+
+body.light-theme .main-content pre::-webkit-scrollbar-thumb {
+    background: #f59e0b; /* Yellow thumb */
+    border-color: #ffffff;
+}
+
+body.light-theme .main-content pre::-webkit-scrollbar-thumb:hover {
+    background: #fbbf24; /* Lighter yellow on hover */
+}
+
+body.light-theme .main-content pre {
+    scrollbar-color: #f59e0b #f7fafc;
 }
 
 body.light-theme .main-content pre code {
