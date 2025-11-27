@@ -18,7 +18,7 @@ A practical reference for **Velociraptor VQL queries** used in DFIR and threat h
 - Format:
 
 ```vql
-`SELECT field1, field2 FROM source() WHERE condition`
+SELECT field1, field2 FROM source() WHERE condition
 ```
 
 - Each query can be **an artifact** (reusable module).
@@ -83,6 +83,7 @@ A practical reference for **Velociraptor VQL queries** used in DFIR and threat h
 | `SELECT * FROM filelist(globs="/etc/cron*")`   | Scheduled jobs     |
 
 ---
+
 
 
 
