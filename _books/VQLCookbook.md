@@ -1,3 +1,8 @@
+---
+title: "VQL Cookbook"
+date: 2025-11-24
+---
+
 # VQL Cookbook
 
 A practical reference for **Velociraptor VQL queries** used in DFIR and threat hunting.
@@ -78,5 +83,6 @@ SELECT field1, field2 FROM source() WHERE condition
 | `SELECT * FROM filelist(globs="/etc/cron*")`   | Scheduled jobs     |
 
 ---
+
 
 
