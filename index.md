@@ -42,7 +42,7 @@ title: welcome, duckies!
         <div class="contact-links">
             <a href="https://www.linkedin.com/in/razlan-ramli-99a527186/" class="contact-link">💼 LinkedIn</a>
             <a href="https://discord.com/users/871586020381061160" class="contact-link">🎮 discord</a>
-            <a href="mailto:your-lanbuatkeje@gmail.com" class="contact-link">📧 Email</a>
+            <a href="mailto:lanbuatkeje@gmail.com" class="contact-link">📧 Email</a>
         </div>
         <p class="contact-note">Always happy to discuss cybersecurity, CTFs, or share learning resources!</p>
     </div>
