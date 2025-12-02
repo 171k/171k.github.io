@@ -1,3 +1,13 @@
+---
+title: "PWN Writeup"
+date: 2025-12-1
+categories: [PWN, Writeup]
+tags: [pwn]
+ctf_event: "PWN Writeup"
+ctf_category: "PWN"
+---
+
+
 # MCC Village Night PWN Writeup
 
 Disclaimer: I am **NOT** a pwn player so my approach is quite.. chatGPT because I use it alot (tried my best)
@@ -176,6 +186,7 @@ And.. thats it for challenge Mac Virus!
 Flag: `MCC{RoP_3@zy_Pe4$y}`
 
 ---
+
 
 
 
