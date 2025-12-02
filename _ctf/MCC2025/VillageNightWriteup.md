@@ -107,7 +107,7 @@ This is visualization for you to understand:
 [ saved RIP ] //Everything will get sent here, overwriting the original content of RIP.
 ```
 
-If you dont understand whats RBP and RIP is, you can simply read here: https://medium.com/@sharonlin/useful-registers-in-assembly-d9a9da22cdd9
+If you dont understand whats RBP and RIP is, you can simply read [here](https://medium.com/@sharonlin/useful-registers-in-assembly-d9a9da22cdd9)
 
 or you can chatGPT and try to understand (please pat yourself at the back if you truly understand it).
 
@@ -186,6 +186,7 @@ And.. thats it for challenge Mac Virus!
 Flag: `MCC{RoP_3@zy_Pe4$y}`
 
 ---
+
 
 
 
