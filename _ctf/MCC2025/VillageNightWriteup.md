@@ -1,9 +1,8 @@
 ---
-title: "PWN Writeup"
+title: "MCC2025"
 date: 2025-12-1
 categories: [PWN, Writeup]
 tags: [pwn]
-ctf_event: "PWN Writeup"
 ctf_category: "PWN"
 ---
 
@@ -186,6 +185,7 @@ And.. thats it for challenge Mac Virus!
 Flag: `MCC{RoP_3@zy_Pe4$y}`
 
 ---
+
 
 
 
