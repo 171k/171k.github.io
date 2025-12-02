@@ -29,27 +29,11 @@
                             <span class="ctf-name">{{ event_group.name }}</span>
                             <span class="ctf-toggle">▶</span>
                         </div>
-                        <div class="ctf-categories" id="{{ event_id }}" style="display: none;">
-                            {% comment %} Group by category within each event {% endcomment %}
-                            {% assign categories = event_group.items | group_by: "ctf_category" | sort: "name" %}
-                            
-                            {% for category_group in categories %}
-                                {% if category_group.name != "" and category_group.name != nil %}
-                                    {% assign category_id = event_id | append: "-" | append: category_group.name | slugify | replace: " ", "-" | downcase %}
-                                    <div class="ctf-category">
-                                        <div class="category-header" onclick="toggleCategory('{{ category_id }}', this)">
-                                            <span class="category-name">{{ category_group.name }}</span>
-                                            <span class="category-toggle">▶</span>
-                                        </div>
-                                        <div class="challenge-list" id="{{ category_id }}-challenges" style="display: none;">
-                                            {% for writeup in category_group.items %}
-                                                <div class="challenge-item">
-                                                    <a href="{{ writeup.url }}" class="challenge-link">{{ writeup.title }}</a>
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                    </div>
-                                {% endif %}
+                        <div class="challenge-list" id="{{ event_id }}" style="display: none;">
+                            {% for writeup in event_group.items %}
+                                <div class="challenge-item">
+                                    <a href="{{ writeup.url }}" class="challenge-link">{{ writeup.title }}</a>
+                                </div>
                             {% endfor %}
                         </div>
                     </div>
@@ -86,16 +70,8 @@
 
 <script>
 function toggleCtfGroup(groupId, headerEl) {
-  const categories = document.getElementById(groupId);
+  const challenges = document.getElementById(groupId);
   const toggleIcon = headerEl.querySelector('.ctf-toggle');
-  const isHidden = getComputedStyle(categories).display === 'none';
-  categories.style.display = isHidden ? 'block' : 'none';
-  if (toggleIcon) toggleIcon.textContent = isHidden ? '▼' : '▶';
-}
-
-function toggleCategory(categoryId, headerEl) {
-  const challenges = document.getElementById(categoryId + '-challenges');
-  const toggleIcon = headerEl.querySelector('.category-toggle');
   const isHidden = getComputedStyle(challenges).display === 'none';
   challenges.style.display = isHidden ? 'block' : 'none';
   if (toggleIcon) toggleIcon.textContent = isHidden ? '▼' : '▶';
