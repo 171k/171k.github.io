@@ -8,7 +8,7 @@ title: welcome, duckies!
 
 <div class="content-box" id="about">
     <h2>🦆 Who Quacked This?</h2>
-    <p>Qwack! I'm <strong>Razlan</strong>, a beginner cybersecurity enthusiast trying to dip my legs into the world of cybersecurity. I am still learning and trying my best to be better so please be nice to me hehe. Why 171k? because it stands for "itik" and I love ducks :3 </p>
+    <p>Qwack! I'm <strong>Razlan</strong>, a beginner cybersecurity enthusiast trying to dip my legs into the world of cybersecurity. I am still learning and trying my best to be better so please be nice to me hehe. Why <strong>171k?</strong> because it stands for "itik" and I love ducks :3 </p>
 
     <p>🎯 <strong>Current Focus:</strong> Digital Forensics and Mobile Hacking</p>
     <p>🏆 <strong>CTF Teams:</strong> Member of UiTM Cyberheroes Club Team</p>
