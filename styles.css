@@ -301,6 +301,47 @@ header {
     margin-bottom: 1rem;
 }
 
+/* Images in markdown content - Responsive and styled */
+.main-content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1.5rem auto;
+    border-radius: 8px;
+    border: 1px solid #2d3748;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+.main-content img:hover {
+    border-color: #4cd137;
+    box-shadow: 0 6px 20px rgba(76, 209, 55, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Centered images with caption support */
+.main-content p img,
+.main-content figure {
+    margin: 1.5rem auto;
+}
+
+.main-content figure {
+    text-align: center;
+    margin: 2rem auto;
+}
+
+.main-content figure img {
+    margin-bottom: 0.5rem;
+}
+
+.main-content figcaption {
+    color: #8892b0;
+    font-size: 0.9rem;
+    font-style: italic;
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
 /* Code blocks - Terminal style with green border */
 .main-content pre {
     background-color: #0a0c0d; /* Dark terminal background */
@@ -471,6 +512,20 @@ body.light-theme .main-content p {
     color: #2d3748; /* Dark text */
 }
 
+body.light-theme .main-content img {
+    border-color: #e5e7eb;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .main-content img:hover {
+    border-color: #f59e0b;
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.2);
+}
+
+body.light-theme .main-content figcaption {
+    color: #718096;
+}
+
 body.light-theme .main-content pre {
     background-color: #f7fafc;
     border-color: #f59e0b; /* Yellow border */
@@ -556,24 +611,6 @@ body.light-theme .main-content td {
 
 body.light-theme .main-content tr:nth-child(even) {
     background-color: #f9fafb;
-}
-
-/* Custom vertical scrollbar for main content - Light theme */
-body.light-theme .main-content::-webkit-scrollbar-track {
-    background: #ffffff;
-}
-
-body.light-theme .main-content::-webkit-scrollbar-thumb {
-    background: #f59e0b; /* Yellow thumb */
-    border-color: #ffffff;
-}
-
-body.light-theme .main-content::-webkit-scrollbar-thumb:hover {
-    background: #fbbf24; /* Lighter yellow on hover */
-}
-
-body.light-theme .main-content {
-    scrollbar-color: #f59e0b #ffffff;
 }
 
 .sidebar-section {
