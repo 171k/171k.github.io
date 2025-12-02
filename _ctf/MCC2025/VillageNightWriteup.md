@@ -12,7 +12,8 @@ ctf_event: "MCC2025"
 Disclaimer: I am **NOT** a pwn player so my approach is quite.. chatGPT because I use it alot (tried my best)
 
 ---
-
+You may download the files [here](https://github.com/171k/MCC25pwnVN)
+---
 ### 0 - Burn Less
 
 > **Description**
@@ -185,6 +186,7 @@ And.. thats it for challenge Mac Virus!
 Flag: `MCC{RoP_3@zy_Pe4$y}`
 
 ---
+
 
 
 
