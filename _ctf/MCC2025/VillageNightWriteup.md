@@ -14,7 +14,7 @@ Respectfully, I just skipped this description because I dont know things about s
 
 So, I dumped the file inside dogbolt to decompile it and throw into chatGPT for the pattern:
 
-![chatgptburnless.png](chatgptburnless.png)
+![chatgptburnless.png](/assets/images/posts/chatgptburnless.png)
 
 So I just follow this pattern and got the flag!
 
@@ -117,7 +117,7 @@ RUN sed -i "s/http:\/\/archive.ubuntu.com/http:\/\/mirrors.tuna.tsinghua.edu.cn/
 
 As you can see, it is using ubuntu:20,04, so i threw this information into chatGPT and it said that the libc used is..
 
-![libc.png](libc.png)
+![libc.png](/assets/images/posts/libc.png)
 
 libc-2.31.so!
 
@@ -176,5 +176,6 @@ And.. thats it for challenge Mac Virus!
 Flag: `MCC{RoP_3@zy_Pe4$y}`
 
 ---
+
 
 
