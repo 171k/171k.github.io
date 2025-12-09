@@ -20,11 +20,11 @@ We were given a file.png but somehow the file is corrupted. our task is to recov
 
 In this classic corrupted file challenge, first thing we need to do is inspect the magic bytes.
 
-![recognizexxd.png](/assets//images/posts%20/curtin25wu/recognizexxd.png)
+![recognizexxd.png](/assets/images/posts/curtin25wu/recognizexxd.png)
 
 After inspecting, we can confirm that this png does not contain the magic bytes of a png which is "89 50 49 47".  Just add theses magic bytes into the file header using [hexed.it](https://hexed.it/). 
 
-![recognizefixed.png](/assets//images/posts%20/curtin25wu/recognizefixed.png)
+![recognizefixed.png](/assets/images/posts/curtin25wu/recognizefixed.png)
 
 This is the fixed image. Looks like the fun didnt end there and we need to dig more.
 
@@ -117,7 +117,7 @@ def fix_png_height(input_path, output_path):
 fix_png_height("fix.png", "restored.png")
 ```
 
-![restored_flag.png](/assets//images/posts%20/curtin25wu/restored_flag.png)
+![restored_flag.png](/assets/images/posts/curtin25wu/restored_flag.png)
 
 Flag: `CURTIN_CTF{C0rRupt3d_f1l3_%#!}`
 
@@ -133,7 +133,7 @@ I tried using `grep` and `find` but I couldnt fetch anything so I believe that t
 
 After few minutes searching through, I found a database:
 
-![mobapp_db.png](/assets//images/posts%20/curtin25wu/mobapp_db.png)
+![mobapp_db.png](/assets/images/posts/curtin25wu/mobapp_db.png)
 
 so this is why I cant find and grep the flag. Because it is located inside a database. I use DB Browser to read the content and get the flag which is encoded in `Base 32`.
 
@@ -223,13 +223,13 @@ We were provided with a zip file that contains Spidey.mp4 and Test.docm.
 
 Before we start inspecting the contents, we need to bypass the zip password first. We can find the password by using `exiftool` and read the comments. 
 
-![Screenshot 2025-12-09 125614.png](/assets//images/posts%20/curtin25wu/exiftoolspidey.png)
+![Screenshot 2025-12-09 125614.png](/assets/images/posts/curtin25wu/exiftoolspidey.png)
 
 The password is `801176025`. I was quite invested so I decoded it and got `Mon 22 May 1995 20:53:45 UTC`. Honestly I tried to look up for the date meaning but I dont know haha. Lets just move on into the next part!
 
 Firstly, I go straight into the `test.docm` to find the flag. 
 
-![Screenshot 2025-12-09 125931.png](/assets//images/posts%20/curtin25wu/docspidey.png)
+![Screenshot 2025-12-09 125931.png](/assets/images/posts/curtin25wu/docspidey.png)
 
 I saw this message from Words. This means that the macro or VBA contains something. So I took a look.
 
@@ -245,7 +245,7 @@ the second flag shall be inside the spidey.mp4! Now lets take a look!
 
 I ran the video inside mpv (kali linux video player) and turn on the subtitle and got this:
 
-![spideyvid.png](/assets//images/posts%20/curtin25wu/spideyvid.png)
+![spideyvid.png](/assets/images/posts/curtin25wu/spideyvid.png)
 
 and.. thats the 2nd part of the flag!
 
@@ -259,7 +259,7 @@ For this challenge, we simply just need to play hide and seek.
 
 I use `FTK Imager` to browse through the E01 and found the flag inside root in partition 3
 
-![Screenshot 2025-12-09 131052.png](/assets//images/posts%20/curtin25wu/seized.png)
+![Screenshot 2025-12-09 131052.png](/assets/images/posts/curtin25wu/seized.png)
 
 The file is encoded in hex inside .Document.
 
@@ -301,7 +301,7 @@ output: `k$$_45#&)!}`
 
 now, i did not managed to pull out the 3rd part so I manually find it from wireshark:
 
-![trafficdns.png](/assets//images/posts%20/curtin25wu/trafficdns.png)
+![trafficdns.png](/assets/images/posts/curtin25wu/trafficdns.png)
 
 I found this `Malformed Packet` and try to follow the stream and found the 3rd flag:
 
@@ -314,3 +314,4 @@ Flag: `CURTIN_CTF{!@C0ll3cT_4lL_Th3_cHunk$$_45#&)!}`
 ---
 
 That is all for my Curtin CTF 2025 writeup! I did not managed to solve the last challenge due to the time limit and my lack of knowledge. Thank you for reading!
+
