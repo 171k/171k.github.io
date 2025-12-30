@@ -337,7 +337,7 @@ Offset(V)     Pid     Handle     Access Type             Details
 0x81e9d708   1640       0x98   0x1f0001 Mutant           XMR8149A9A8
 ```
 
-**⚠️ XMM, XME, XMR prefixed mutexes are Zeus/Zbot signatures!**
+**XMM, XME, XMR prefixed mutexes are Zeus/Zbot signatures!!!!!**
 
 ### Volatility printkey Output (PERSISTENCE MECHANISM FOUND):
 
@@ -562,3 +562,4 @@ The malware uses sophisticated JavaScript-based web injection:
 Conclusion is.. be careful dont click click casually la grrr.
 
 Thank you for reading!
+
