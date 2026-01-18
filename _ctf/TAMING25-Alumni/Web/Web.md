@@ -1,3 +1,11 @@
+---
+title: "Web Writeup"
+date: 2025-12-9
+categories: [Web, Writeup]
+tags: [ctf]
+ctf_event: "TAMING25"
+---
+
 # TAMING Final Round Writeup - Alumni Category
 
 by 171k
@@ -829,4 +837,5 @@ The flag is extracted from the response: `ictff8{SSTI_Tw1gOwn3d_bY_uS!!!!}`
 ---
 
 Thats it for the web writeup for TAMING CTF Final Round - Alumni Category. Thanks for reading
+
 
