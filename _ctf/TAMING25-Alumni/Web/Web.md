@@ -6,7 +6,7 @@ by 171k
 
 We managed to solve 9 out of 16 challenges. Placing us 4th or 5th (almost podium)
 
-<img title="" src="file:///R:/taming/Web/frozensb.jpeg" alt="frozensb.jpeg" width="436" data-align="center">
+<img title="" src="/assets/images/posts/taming25/frozensb.jpeg" alt="frozensb.jpeg" width="436" data-align="center">
 
 ---
 
@@ -24,7 +24,7 @@ We managed to solve 9 out of 16 challenges. Placing us 4th or 5th (almost podium
 
 ### 1. Examining the Web
 
-![techcorp.png](R:\taming\Web\techcorp.png)
+![techcorp.png](/assets/images/posts/taming25/techcorp.png)
 
 The main page displays a chat interface with:
 
@@ -103,7 +103,7 @@ Content-Type: application/json
 }
 ```
 
-![aisolved.png](R:\taming\Web\aisolved.png) 
+![aisolved.png](/assets/images/posts/taming25/aisolved.png) 
 
 ## Why It Worked
 
@@ -681,7 +681,7 @@ ictff8{XXE_w1th_php_f1lt3r}
 
 There is another challenge named order with xmile. I use the exact same method to fetch the flag but from different link: 
 
-![lol.png](R:\taming\Web\lol.png)
+![lol.png](/assets/images/posts/taming25/lol.png)
 
 ---
 
@@ -829,3 +829,4 @@ The flag is extracted from the response: `ictff8{SSTI_Tw1gOwn3d_bY_uS!!!!}`
 ---
 
 Thats it for the web writeup for TAMING CTF Final Round - Alumni Category. Thanks for reading
+
