@@ -30,7 +30,7 @@ We receive  `evidence.bin` to investigate. Thats it.
 
 During recon, i use strings read the content and the flag directly shows up.
 
-![strings.png](R:\taming\Web\TAMING25-Alumni\Forensic\strings.png)
+![strings.png](strings.png)
 
 ## Flag
 
@@ -90,3 +90,4 @@ Using all the words provided and the 4-byte RAID 0 reassembly pattern, the flag 
 ---
 
 Thats it for the Forensic writeup for TAMING CTF Final Round - Alumni Category. Thanks for reading. 
+
