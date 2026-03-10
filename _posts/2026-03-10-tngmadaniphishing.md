@@ -100,7 +100,7 @@ The lure image shows a fake **Touch 'n Go eWallet "Money Packet"** with a QR cod
 letak gambar sini.
 
 > "1. Lancarkan aplikasi eWallet → 2. Imbas Kod QR → 3. Sahkan Transaksi"
-> "Imbas QR untuk teruskan" (Scan QR to continue)
+> "Imbas QR untuk teruskan" 
 
 The QR code in the lure image encodes the phishing URL. This is the likely **primary delivery vector** where the image is shared via WhatsApp groups, Telegram or social media thenvictims scan the QR code to land on the phishing page. The QR code itself should be treated as an IOC.
 
