@@ -10,8 +10,6 @@ featured: true
 
 # Touch 'n Go / Malaysia Madani Scam QR Phishing analysis!
 
-![](/assets/images/posts/madaniikan/qrpancing.png)
-
 **Date:** 2026-03-10
 **Target URL:** `https://bantuan-tng-inst.aply-gov.online/ap/`
 **Threat Type:** Phishing / Telegram Account Takeover
@@ -19,7 +17,7 @@ featured: true
 
 **By:** 171k
 
-Click [here](#my-advice-to-malaysian) to skip to summary and my advice :3
+Click [here](#my-advice-to-dear-malaysian) to skip to summary and my advice :3
 
 ---
 
