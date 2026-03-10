@@ -93,7 +93,7 @@ These makes the website looks more legit to trick users.
 
 ### Lure Image & QR Code Delivery Vector
 
-![](/assets/images/posts/madaniikan/tngphish.jpeg)
+![](/assets/images/posts/madaniikan/tngphishh.png)
 
 The lure image shows a fake **Touch 'n Go eWallet "Money Packet"** with a QR code and instructions in Malay:
 
