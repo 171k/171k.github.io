@@ -10,7 +10,7 @@ featured: true
 
 # Touch 'n Go / Malaysia Madani Scam QR Phishing analysis!
 
-![](C:\Users\Razlan\CTF\tngscam\qrpancing.png)
+![](/assets/images/posts/madaniikan/qrpancing.png)
 
 **Date:** 2026-03-10
 **Target URL:** `https://bantuan-tng-inst.aply-gov.online/ap/`
@@ -78,7 +78,7 @@ The attacker chose the `.online` TLD and structured the domain so `gov` appears 
 
 ## ii. The Phishing Page
 
-![](C:\Users\Razlan\CTF\tngscam\phishingsite.png)
+![](/assets/images/posts/madaniikan/phishingsite.png)
 
 ### Impersonation
 
@@ -95,7 +95,7 @@ These makes the website looks more legit to trick users.
 
 ### Lure Image & QR Code Delivery Vector
 
-![](C:\Users\Razlan\CTF\tngscam\tngphish.jpeg)
+![](/assets/images/posts/madaniikan/tngphish.jpeg)
 
 The lure image shows a fake **Touch 'n Go eWallet "Money Packet"** with a QR code and instructions in Malay:
 
@@ -147,7 +147,7 @@ The victim is seamlessly redirected to the **legitimate Malaysia Madani website*
 
 ### Error Handling in JavaScript
 
-![](C:\Users\Razlan\CTF\tngscam\jserror.png)
+![](/assets/images/posts/madaniikan/jserror.png)
 
 The client-side JavaScript handles specific Telegram API error codes, revealing the kit's awareness of Telegram's authentication flow:
 
@@ -180,7 +180,7 @@ Once all three are submitted, the attacker has **full access to the victim's Tel
 
 ### Admin Panel Exposure
 
-![](C:\Users\Razlan\CTF\tngscam\adminpanel.png)
+![](/assets/images/posts/madaniikan/adminpanel.png)
 
 Navigating to `gateway.php?path=/generate-session` via GET request (instead of POST) **reveals the full Truelogin V5 admin dashboard** in a browser. This is a significant OPSEC failure by the operator.
 
@@ -195,7 +195,7 @@ The exposed admin panel shows:
 | **Notification** | Telegram Bot                                                                                                     |
 | **UI Note**      | "Update konfigurasi tanpa harus SSH ke server" (Indonesian: "Update configuration without SSHing to the server") |
 
-![](C:\Users\Razlan\CTF\tngscam\bottoken.png)
+![](/assets/images/posts/madaniikan/bottoken.png)
 
 The panel allows an authenticated operator to **load and edit the `.env` configuration**, which contains:
 
@@ -363,6 +363,6 @@ Sometimes for youngsters and IT people, we can identify that its a scam in one l
 
 Kadangkala bagi orang-orang muda dan orang IT, kita dapat kenalpasti perkara sebegini adalah scam dalam sekelip mata. Ini kerana kita BUKAN mangsa yang mereka inginkan. Selalunya mangsa adalah di kalangan orang-orang yang kesempitan wang ataupun warga emas yang tidak celik digital dan percaya semua yang mereka lihat. Jadi perhatikanlah orang tersayang kalian, ingatkan mereka untuk sentiasa bertanya kepada kalian dahulu sebelum menekan atau menghantar perkara yang sensitif di dunia digital!
 
-That is all from me, stay safe everyone!
+That is all from me, stay safe everyone! <3 🦆
 
 ---
