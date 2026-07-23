@@ -1,6 +1,8 @@
 ---
 title: "Wireshark"
 date: 2024-05-01
+description: "A Wireshark reference for CTF packet analysis, essential display filters, stream inspection, and extracting useful evidence."
+pond: false
 ---
 
 # Wireshark for CTF

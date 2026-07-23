@@ -1,0 +1,12 @@
+# Generated site output
+_site/
+.jekyll-cache/
+.sass-cache/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Local tooling
+.DS_Store
+Thumbs.db

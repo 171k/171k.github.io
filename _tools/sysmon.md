@@ -1,6 +1,8 @@
 ---
 title: "Sysmon mon mon"
 date: 2025-11-25
+description: "A practical Sysmon reference covering installation, configuration, important event IDs, threat hunting, and DFIR usage."
+pond: true
 ---
 
 # Who's that Sysmon?

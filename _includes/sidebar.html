@@ -1,79 +1,161 @@
-<aside class="sidebar">
-    <div class="sidebar-section">
-        <h3>Home</h3>
-        <ul class="sidebar-list">
-            <li><a href="/">Home</a></li>
-        </ul>
-    </div>
-    <div class="sidebar-section">
-        <h3>Latest Quack</h3>
-        <ul class="sidebar-list">
-            {% assign posts_sorted = site.posts | sort: 'date' | reverse %}
-            {% for post in posts_sorted limit:3 %}
-            <li><a href="{{ post.url }}">{{ post.title }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
-    <div class="sidebar-section">
-        <div class="ctf-section">
-            <h3>CTF Writeups</h3>
-            
-            {% comment %} Group CTF writeups by event {% endcomment %}
-            {% assign ctf_events = site.ctf | group_by: "ctf_event" | sort: "name" | reverse %}
-            
-            {% for event_group in ctf_events %}
-                {% if event_group.name != "" and event_group.name != nil %}
-                    {% assign event_id = event_group.name | slugify | replace: " ", "-" | downcase %}
-                    <div class="ctf-group">
-                        <div class="ctf-group-header" onclick="toggleCtfGroup('{{ event_id }}', this)">
-                            <span class="ctf-name">{{ event_group.name }}</span>
-                            <span class="ctf-toggle">▶</span>
-                        </div>
-                        <div class="challenge-list" id="{{ event_id }}" style="display: none;">
-                            {% for writeup in event_group.items %}
-                                <div class="challenge-item">
-                                    <a href="{{ writeup.url }}" class="challenge-link">{{ writeup.title }}</a>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endif %}
-            {% endfor %}
+<aside class="sidebar" aria-label="Site navigation">
+    <nav class="sidebar-nav">
+        <div class="sidebar-section">
+            <p class="sidebar-label">Start here</p>
+            <ul class="sidebar-list">
+                <li><a href="/"{% if page.url == "/" %} aria-current="page"{% endif %}>Overview</a></li>
+                <li><a href="/#featured">Featured work</a></li>
+                <li><a href="/search/"{% if page.url == "/search/" %} aria-current="page"{% endif %}>Search</a></li>
+                <li><a href="/#contact">Contact</a></li>
+            </ul>
         </div>
-    </div>
-    <div class="sidebar-section">
-        <h3>Tools I Use</h3>
-        <ul class="sidebar-list">
-            {% assign tools_sorted = site.tools | sort: 'title' %}
-            {% for t in tools_sorted limit:6 %}
-            <li><a href="{{ t.url }}">{{ t.title }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
-    <div class="sidebar-section">
-        <h3>Books & Sheets</h3>
-        <ul class="sidebar-list">
-            {% assign books_sorted = site.books | sort: 'title' %}
-            {% for book in books_sorted limit:6 %}
-            <li><a href="{{ book.url }}">{{ book.title }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
-    <div class="sidebar-section">
-        <h3>Links</h3>
-        <ul class="sidebar-list">
-            <li><a href="#title">About Me</a></li>
-            <li><a href="/#contact">Contact</a></li>
-        </ul>
-    </div>
+
+        <div class="sidebar-section sidebar-section-collapsible">
+            <button class="sidebar-section-toggle" type="button" onclick="toggleSidebarSection(this)" aria-expanded="{% if page.collection == 'quacks' or page.url == '/quacks/' %}true{% else %}false{% endif %}" aria-controls="sidebar-quacks">
+                <span class="sidebar-label">Quacks</span>
+                <span class="sidebar-section-icon" aria-hidden="true">{% if page.collection == 'quacks' or page.url == '/quacks/' %}−{% else %}+{% endif %}</span>
+            </button>
+            <div class="sidebar-section-body" id="sidebar-quacks"{% unless page.collection == 'quacks' or page.url == '/quacks/' %} hidden{% endunless %}>
+                <p class="sidebar-section-hint">Personal notes, event stories, and reflections.</p>
+                <ul class="sidebar-list compact-list">
+                    <li><a href="/quacks/"{% if page.url == "/quacks/" %} aria-current="page"{% endif %}>All quacks</a></li>
+                    {% assign quacks_sorted = site.quacks | sort: 'date' | reverse %}
+                    {% for quack in quacks_sorted limit:6 %}
+                    <li><a href="{{ quack.url }}"{% if page.url == quack.url %} aria-current="page"{% endif %}>{{ quack.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        {% assign portfolio_open = false %}
+        {% if page.collection == "projects" or page.collection == "certifications" or page.collection == "achievements" or page.url == "/projects/" or page.url == "/certifications/" or page.url == "/achievements/" %}
+            {% assign portfolio_open = true %}
+        {% endif %}
+        <div class="sidebar-section sidebar-section-collapsible">
+            <button class="sidebar-section-toggle" type="button" onclick="toggleSidebarSection(this)" aria-expanded="{% if portfolio_open %}true{% else %}false{% endif %}" aria-controls="sidebar-portfolio">
+                <span class="sidebar-label">Portfolio</span>
+                <span class="sidebar-section-icon" aria-hidden="true">{% if portfolio_open %}−{% else %}+{% endif %}</span>
+            </button>
+            <div class="sidebar-section-body" id="sidebar-portfolio"{% unless portfolio_open %} hidden{% endunless %}>
+                <ul class="sidebar-list">
+                    <li><a href="/projects/"{% if page.url == "/projects/" or page.collection == "projects" %} aria-current="page"{% endif %}>Projects</a></li>
+                    <li><a href="/certifications/"{% if page.url == "/certifications/" or page.collection == "certifications" %} aria-current="page"{% endif %}>Certifications</a></li>
+                    <li><a href="/achievements/"{% if page.url == "/achievements/" or page.collection == "achievements" %} aria-current="page"{% endif %}>Achievements</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="sidebar-section sidebar-section-collapsible">
+            <button class="sidebar-section-toggle" type="button" onclick="toggleSidebarSection(this)" aria-expanded="{% if page.collection == 'ctf' %}true{% else %}false{% endif %}" aria-controls="sidebar-ctf-library">
+                <span class="sidebar-label">CTF library</span>
+                <span class="sidebar-section-icon" aria-hidden="true">{% if page.collection == 'ctf' %}−{% else %}+{% endif %}</span>
+            </button>
+            <div class="sidebar-section-body" id="sidebar-ctf-library"{% unless page.collection == 'ctf' %} hidden{% endunless %}>
+              <p class="sidebar-section-hint">Challenges, solutions, and event writeups.</p>
+              <div class="ctf-navigation">
+                {% assign ctf_events = site.ctf | group_by: "ctf_event" | sort: "name" | reverse %}
+                {% for event_group in ctf_events %}
+                    {% if event_group.name != "" and event_group.name != nil %}
+                        {% assign event_id = event_group.name | slugify | replace: " ", "-" | downcase %}
+                        <div class="ctf-group">
+                            <button class="ctf-group-header" type="button" onclick="toggleCtfGroup('{{ event_id }}', this)" aria-expanded="false" aria-controls="{{ event_id }}">
+                                <span class="ctf-name">{{ event_group.name }}</span>
+                                <span class="ctf-toggle" aria-hidden="true">+</span>
+                            </button>
+                            <div class="challenge-list" id="{{ event_id }}" hidden>
+                                {% for writeup in event_group.items %}
+                                    <a href="{{ writeup.url }}" class="challenge-link">{{ writeup.title }}</a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+        </div>
+
+        <div class="sidebar-section sidebar-section-collapsible">
+            <button class="sidebar-section-toggle" type="button" onclick="toggleSidebarSection(this)" aria-expanded="{% if page.collection == 'tools' %}true{% else %}false{% endif %}" aria-controls="sidebar-toolkit">
+                <span class="sidebar-label">Toolkit</span>
+                <span class="sidebar-section-icon" aria-hidden="true">{% if page.collection == 'tools' %}−{% else %}+{% endif %}</span>
+            </button>
+            <div class="sidebar-section-body" id="sidebar-toolkit"{% unless page.collection == 'tools' %} hidden{% endunless %}>
+                <p class="sidebar-section-hint">Security tools and practical references.</p>
+                <ul class="sidebar-list">
+                    {% assign tools_sorted = site.tools | sort: 'title' %}
+                    {% for tool in tools_sorted limit:6 %}
+                    <li><a href="{{ tool.url }}">{{ tool.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="sidebar-section sidebar-section-collapsible">
+            <button class="sidebar-section-toggle" type="button" onclick="toggleSidebarSection(this)" aria-expanded="{% if page.collection == 'books' %}true{% else %}false{% endif %}" aria-controls="sidebar-library">
+                <span class="sidebar-label">Library</span>
+                <span class="sidebar-section-icon" aria-hidden="true">{% if page.collection == 'books' %}−{% else %}+{% endif %}</span>
+            </button>
+            <div class="sidebar-section-body" id="sidebar-library"{% unless page.collection == 'books' %} hidden{% endunless %}>
+                <p class="sidebar-section-hint">Cookbooks, sheets, and longer references.</p>
+                <ul class="sidebar-list">
+                    {% assign books_sorted = site.books | sort: 'title' %}
+                    {% for book in books_sorted limit:6 %}
+                    <li><a href="{{ book.url }}">{{ book.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="sidebar-pond-cta">
+            <a class="sidebar-pond-link" href="/pond/"{% if page.url == "/pond/" %} aria-current="page"{% endif %}>
+                <span class="sidebar-pond-copy">
+                    <small>Interactive</small>
+                    <strong>Go to Duck Pond</strong>
+                </span>
+                <span class="sidebar-pond-arrow" aria-hidden="true">&#8599;</span>
+            </a>
+        </div>
+    </nav>
 </aside>
 
 <script>
-function toggleCtfGroup(groupId, headerEl) {
-  const challenges = document.getElementById(groupId);
-  const toggleIcon = headerEl.querySelector('.ctf-toggle');
-  const isHidden = getComputedStyle(challenges).display === 'none';
-  challenges.style.display = isHidden ? 'block' : 'none';
-  if (toggleIcon) toggleIcon.textContent = isHidden ? '▼' : '▶';
+function toggleSidebarSection(button) {
+    const target = document.getElementById(button.getAttribute('aria-controls'));
+    if (!target) return;
+    const willOpen = target.hidden;
+
+    document.querySelectorAll('.sidebar-section-toggle[aria-expanded="true"]').forEach(function (openButton) {
+        if (openButton === button) return;
+        const openTarget = document.getElementById(openButton.getAttribute('aria-controls'));
+        if (openTarget) openTarget.hidden = true;
+        openButton.setAttribute('aria-expanded', 'false');
+        const openIcon = openButton.querySelector('.sidebar-section-icon');
+        if (openIcon) openIcon.textContent = '+';
+    });
+
+    target.hidden = !willOpen;
+    button.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    const icon = button.querySelector('.sidebar-section-icon');
+    if (icon) icon.textContent = willOpen ? '−' : '+';
+}
+
+function toggleCtfGroup(groupId, button) {
+    const target = document.getElementById(groupId);
+    if (!target) return;
+    const willOpen = target.hidden;
+
+    document.querySelectorAll('.ctf-group-header[aria-expanded="true"]').forEach(function (openButton) {
+        if (openButton === button) return;
+        const openTarget = document.getElementById(openButton.getAttribute('aria-controls'));
+        if (openTarget) openTarget.hidden = true;
+        openButton.setAttribute('aria-expanded', 'false');
+        const icon = openButton.querySelector('.ctf-toggle');
+        if (icon) icon.textContent = '+';
+    });
+
+    target.hidden = !willOpen;
+    button.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    const icon = button.querySelector('.ctf-toggle');
+    if (icon) icon.textContent = willOpen ? '−' : '+';
 }
 </script>

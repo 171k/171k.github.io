@@ -1,19 +1,4 @@
 <script>
-    function toggleTheme() {
-        const body = document.body;
-        const themeToggle = document.querySelector('.theme-toggle');
-        
-        if (body.classList.contains('light-theme')) {
-            body.classList.remove('light-theme');
-            themeToggle.textContent = '🌙';
-            localStorage.setItem('theme', 'dark');
-        } else {
-            body.classList.add('light-theme');
-            themeToggle.textContent = '☀️';
-            localStorage.setItem('theme', 'light');
-        }
-    }
-
     function toggleSidebar() {
         const body = document.body;
         const sidebar = document.querySelector('.sidebar');
@@ -22,40 +7,331 @@
         if (!sidebar || !overlay) return;
         const open = sidebar.classList.toggle('sidebar-open');
         overlay.classList.toggle('overlay-visible', open);
-        if (burger) burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (burger) {
+            burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+            burger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+        }
         body.classList.toggle('nav-open', open);
     }
 
     function closeSidebar() {
-        const body = document.body;
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.sidebar-overlay');
         const burger = document.querySelector('.burger-toggle');
         if (sidebar) sidebar.classList.remove('sidebar-open');
         if (overlay) overlay.classList.remove('overlay-visible');
-        if (burger) burger.setAttribute('aria-expanded', 'false');
-        body.classList.remove('nav-open');
+        if (burger) {
+            burger.setAttribute('aria-expanded', 'false');
+            burger.setAttribute('aria-label', 'Open menu');
+        }
+        document.body.classList.remove('nav-open');
     }
 
-    // Load saved theme
-    document.addEventListener('DOMContentLoaded', function() {
-        const savedTheme = localStorage.getItem('theme');
+    document.addEventListener('DOMContentLoaded', function () {
+        const pondVideo = document.getElementById('pond-video');
+        const pondToggle = document.querySelector('.pond-toggle');
         const themeToggle = document.querySelector('.theme-toggle');
-        
-        if (savedTheme === 'light') {
-            document.body.classList.add('light-theme');
-            themeToggle.textContent = '☀️';
+        const backgroundMusic = document.getElementById('background-music');
+        const musicToggle = document.querySelector('.music-toggle');
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const smallScreen = window.matchMedia('(max-width: 700px)');
+        const saveData = Boolean(navigator.connection && navigator.connection.saveData);
+        let pausedByVisitor = false;
+        let pondLoaded = false;
+
+        if (backgroundMusic && musicToggle) {
+            const normalMusicVolume = 0.16;
+            const fadeOutSeconds = 8;
+            const fadeInSeconds = 2;
+            let musicStarted = false;
+            let musicPausedByVisibility = document.hidden;
+            let lastSavedSecond = -1;
+
+            function readMusicSetting(key) {
+                try { return localStorage.getItem(key); } catch (error) { return null; }
+            }
+
+            function saveMusicSetting(key, value) {
+                try { localStorage.setItem(key, value); } catch (error) {}
+            }
+
+            function saveMusicPosition() {
+                if (!Number.isFinite(backgroundMusic.currentTime)) return;
+                try { sessionStorage.setItem('backgroundMusicTime', String(backgroundMusic.currentTime)); } catch (error) {}
+            }
+
+            function updateMusicControl() {
+                const waitingToPlay = backgroundMusic.paused && !musicStarted;
+                const muted = backgroundMusic.muted;
+                const label = waitingToPlay
+                    ? 'Play background music'
+                    : muted
+                        ? 'Unmute background music'
+                        : 'Mute background music';
+
+                const musicIcon = musicToggle.querySelector('i');
+                musicIcon.className = waitingToPlay
+                    ? 'fas fa-play'
+                    : muted
+                        ? 'fas fa-volume-xmark'
+                        : 'fas fa-volume-low';
+                musicToggle.setAttribute('aria-label', label);
+                musicToggle.setAttribute('title', label);
+                musicToggle.setAttribute('aria-pressed', muted ? 'true' : 'false');
+                musicToggle.classList.toggle('is-muted', muted);
+                musicToggle.classList.toggle('is-waiting', waitingToPlay);
+            }
+
+            function updateMusicVolume() {
+                if (backgroundMusic.muted || !Number.isFinite(backgroundMusic.duration)) return;
+                const remaining = backgroundMusic.duration - backgroundMusic.currentTime;
+                const fadeIn = Math.min(1, backgroundMusic.currentTime / fadeInSeconds);
+                const fadeOut = Math.min(1, Math.max(0, remaining / fadeOutSeconds));
+                backgroundMusic.volume = normalMusicVolume * Math.min(fadeIn, fadeOut);
+            }
+
+            function startBackgroundMusic() {
+                const playRequest = backgroundMusic.play();
+                if (!playRequest) {
+                    musicStarted = true;
+                    updateMusicControl();
+                    return Promise.resolve();
+                }
+                return playRequest.then(function () {
+                    musicStarted = true;
+                    updateMusicVolume();
+                    updateMusicControl();
+                }).catch(function () {
+                    musicStarted = false;
+                    updateMusicControl();
+                });
+            }
+
+            backgroundMusic.muted = readMusicSetting('backgroundMusicMuted') === 'true';
+            backgroundMusic.volume = backgroundMusic.muted ? 0 : normalMusicVolume;
+
+            function prepareBackgroundMusic() {
+                let savedTime = 0;
+                try { savedTime = Number(sessionStorage.getItem('backgroundMusicTime')) || 0; } catch (error) {}
+                if (Number.isFinite(backgroundMusic.duration) && savedTime > 0) {
+                    backgroundMusic.currentTime = savedTime % backgroundMusic.duration;
+                }
+                updateMusicVolume();
+                if (!document.hidden) startBackgroundMusic();
+            }
+
+            if (backgroundMusic.readyState >= 1) prepareBackgroundMusic();
+            else backgroundMusic.addEventListener('loadedmetadata', prepareBackgroundMusic, { once: true });
+
+            backgroundMusic.addEventListener('timeupdate', function () {
+                updateMusicVolume();
+                const currentSecond = Math.floor(backgroundMusic.currentTime);
+                if (currentSecond !== lastSavedSecond && currentSecond % 2 === 0) {
+                    lastSavedSecond = currentSecond;
+                    saveMusicPosition();
+                }
+            });
+
+            backgroundMusic.addEventListener('ended', function () {
+                backgroundMusic.currentTime = 0;
+                if (!backgroundMusic.muted) backgroundMusic.volume = 0;
+                startBackgroundMusic();
+            });
+
+            musicToggle.addEventListener('click', function () {
+                if (backgroundMusic.paused) {
+                    backgroundMusic.muted = false;
+                    saveMusicSetting('backgroundMusicMuted', 'false');
+                    startBackgroundMusic();
+                    return;
+                }
+                backgroundMusic.muted = !backgroundMusic.muted;
+                saveMusicSetting('backgroundMusicMuted', String(backgroundMusic.muted));
+                if (!backgroundMusic.muted) updateMusicVolume();
+                updateMusicControl();
+            });
+
+            function retryMusicAfterInteraction(event) {
+                if ((event.target instanceof Element && event.target.closest('.music-toggle')) || !backgroundMusic.paused) return;
+                startBackgroundMusic();
+            }
+
+            document.addEventListener('pointerdown', retryMusicAfterInteraction, { passive: true });
+            document.addEventListener('keydown', retryMusicAfterInteraction);
+            document.addEventListener('visibilitychange', function () {
+                if (document.hidden) {
+                    musicPausedByVisibility = !backgroundMusic.paused;
+                    saveMusicPosition();
+                    backgroundMusic.pause();
+                    return;
+                }
+
+                if (musicPausedByVisibility) {
+                    musicPausedByVisibility = false;
+                    startBackgroundMusic();
+                }
+            });
+            window.addEventListener('pagehide', saveMusicPosition);
+            updateMusicControl();
         }
 
-        // Close on Escape
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') closeSidebar();
+        document.querySelectorAll('#main-content img').forEach(function (image) {
+            if (!image.hasAttribute('loading')) image.loading = 'lazy';
+            if (!image.hasAttribute('decoding')) image.decoding = 'async';
         });
 
-        // Close on any sidebar link click
-        document.addEventListener('click', function(e){
-            const link = e.target.closest('.sidebar a');
+        function getSavedTheme() {
+            try {
+                const saved = localStorage.getItem('theme');
+                return saved === 'light' || saved === 'dark' ? saved : null;
+            } catch (error) {
+                return null;
+            }
+        }
+
+        function applyTheme(theme, remember) {
+            const isLight = theme === 'light';
+            document.documentElement.dataset.theme = theme;
+            document.documentElement.style.colorScheme = theme;
+
+            const themeColor = document.getElementById('theme-color');
+            if (themeColor) themeColor.content = isLight ? '#e7f0e9' : '#07171e';
+
+            if (themeToggle) {
+                themeToggle.querySelector('i').className = isLight ? 'fas fa-moon' : 'fas fa-sun';
+                themeToggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+                themeToggle.setAttribute('title', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+                themeToggle.setAttribute('aria-pressed', isLight ? 'true' : 'false');
+            }
+
+            if (remember) {
+                try { localStorage.setItem('theme', theme); } catch (error) {}
+            }
+        }
+
+        applyTheme(document.documentElement.dataset.theme || 'dark', false);
+
+        if (themeToggle) {
+            themeToggle.addEventListener('click', function () {
+                applyTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light', true);
+            });
+        }
+
+        function setPondPaused(paused) {
+            if (!pondVideo || !pondToggle || !pondLoaded) return;
+            if (paused) {
+                pondVideo.pause();
+                pondToggle.querySelector('i').className = 'fas fa-play';
+                pondToggle.setAttribute('aria-label', 'Play pond animation');
+                pondToggle.setAttribute('title', 'Play pond animation');
+            } else {
+                pondVideo.play().catch(function () {});
+                pondToggle.querySelector('i').className = 'fas fa-pause';
+                pondToggle.setAttribute('aria-label', 'Pause pond animation');
+                pondToggle.setAttribute('title', 'Pause pond animation');
+            }
+            pondToggle.setAttribute('aria-pressed', paused ? 'true' : 'false');
+        }
+
+        function loadPondVideo() {
+            if (!pondVideo || pondLoaded || reducedMotion.matches || smallScreen.matches || saveData) return;
+            const source = pondVideo.querySelector('source[data-src]');
+            if (!source) return;
+            source.src = source.dataset.src;
+            source.removeAttribute('data-src');
+            pondVideo.load();
+            pondVideo.addEventListener('canplay', function () {
+                pondLoaded = true;
+                if (pondToggle) pondToggle.hidden = false;
+                if (!pausedByVisitor && !document.hidden) setPondPaused(false);
+            }, { once: true });
+        }
+
+        if (pondVideo) {
+            if ('requestIdleCallback' in window) requestIdleCallback(loadPondVideo, { timeout: 1800 });
+            else setTimeout(loadPondVideo, 700);
+        }
+
+        if (pondToggle && pondVideo) {
+            pondToggle.addEventListener('click', function () {
+                pausedByVisitor = !pondVideo.paused;
+                setPondPaused(pausedByVisitor);
+            });
+        }
+
+        document.addEventListener('visibilitychange', function () {
+            if (!pondVideo || !pondLoaded) return;
+            if (document.hidden) pondVideo.pause();
+            else if (!pausedByVisitor && !reducedMotion.matches) setPondPaused(false);
+        });
+
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') closeSidebar();
+        });
+
+        document.addEventListener('click', function (event) {
+            const link = event.target.closest('.sidebar a');
             if (link) closeSidebar();
         });
+
+        const pdfViewer = document.getElementById('pdf-viewer');
+        if (pdfViewer) {
+            const pdfFrame = pdfViewer.querySelector('.pdf-frame');
+            const pdfTitle = pdfViewer.querySelector('#pdf-viewer-title');
+            const pdfExternal = pdfViewer.querySelector('.pdf-external');
+            const pdfLoading = pdfViewer.querySelector('.pdf-loading');
+            const pdfClose = pdfViewer.querySelector('.pdf-close');
+            const pdfStage = pdfViewer.querySelector('.pdf-viewer-stage');
+            let pdfOpener = null;
+            let pdfRevealTimer = null;
+
+            function revealPdfViewer() {
+                clearTimeout(pdfRevealTimer);
+                pdfLoading.hidden = true;
+                pdfStage.classList.remove('is-loading');
+            }
+
+            function closePdfViewer() {
+                if (pdfViewer.open) pdfViewer.close();
+            }
+
+            document.addEventListener('click', function (event) {
+                const trigger = event.target.closest('.pdf-launch');
+                if (!trigger) return;
+                const source = trigger.dataset.pdf;
+                if (!source) return;
+
+                pdfOpener = trigger;
+                pdfTitle.textContent = trigger.dataset.pdfTitle || 'PDF writeup';
+                pdfExternal.href = source;
+                pdfLoading.hidden = false;
+                pdfStage.classList.add('is-loading');
+                pdfViewer.showModal();
+                document.body.classList.add('pdf-open');
+                requestAnimationFrame(function () {
+                    pdfFrame.src = source;
+                    pdfRevealTimer = setTimeout(revealPdfViewer, 2500);
+                });
+            });
+
+            pdfFrame.addEventListener('load', revealPdfViewer);
+
+            pdfClose.addEventListener('click', closePdfViewer);
+            pdfViewer.addEventListener('cancel', function (event) {
+                event.preventDefault();
+                closePdfViewer();
+            });
+            pdfViewer.addEventListener('click', function (event) {
+                if (event.target === pdfViewer) closePdfViewer();
+            });
+            pdfViewer.addEventListener('close', function () {
+                clearTimeout(pdfRevealTimer);
+                document.body.classList.remove('pdf-open');
+                pdfFrame.removeAttribute('src');
+                pdfStage.classList.add('is-loading');
+                pdfLoading.hidden = false;
+                if (pdfOpener) pdfOpener.focus();
+            });
+        }
     });
 </script>

@@ -1,0 +1,22 @@
+<dialog class="pdf-viewer" id="pdf-viewer" aria-labelledby="pdf-viewer-title">
+    <div class="pdf-viewer-shell">
+        <header class="pdf-viewer-header">
+            <div>
+                <p>Field document</p>
+                <h2 id="pdf-viewer-title">PDF writeup</h2>
+            </div>
+            <div class="pdf-viewer-actions">
+                <a class="pdf-external" href="#" target="_blank" rel="noopener">Open PDF</a>
+                <button class="pdf-close" type="button" aria-label="Close PDF viewer">&times;</button>
+            </div>
+        </header>
+        <div class="pdf-viewer-stage is-loading">
+            <p class="pdf-loading" role="status">Loading document...</p>
+            <iframe class="pdf-frame" title="PDF document"></iframe>
+        </div>
+        <footer class="pdf-viewer-footer">
+            <span>Scroll inside the document to read</span>
+            <span>Press Esc to close</span>
+        </footer>
+    </div>
+</dialog>

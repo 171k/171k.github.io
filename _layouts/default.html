@@ -3,18 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page.title | default: site.title }}</title>
-    <link rel="stylesheet" href="/styles.css?v=6">
-    <link rel="icon" type="image/x-icon" href="/favicon.png">
+    <meta id="theme-color" name="theme-color" content="#07171e">
+    {% assign meta_title = page.title | default: site.title %}
+    {% assign meta_description = page.description | default: page.excerpt | default: site.description | strip_html | strip_newlines | truncate: 160 %}
+    {% assign canonical_url = page.url | absolute_url %}
+    <title>{{ meta_title }}</title>
+    <meta name="description" content="{{ meta_description | escape }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <meta property="og:site_name" content="{{ site.title | escape }}">
+    <meta property="og:title" content="{{ meta_title | escape }}">
+    <meta property="og:description" content="{{ meta_description | escape }}">
+    <meta property="og:url" content="{{ canonical_url }}">
+    <meta property="og:type" content="{% if page.url == '/' %}website{% else %}article{% endif %}">
+    <meta property="og:image" content="{{ '/assets/video/pond-poster.jpg' | absolute_url }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ meta_title | escape }}">
+    <meta name="twitter:description" content="{{ meta_description | escape }}">
+    <meta name="twitter:image" content="{{ '/assets/video/pond-poster.jpg' | absolute_url }}">
+    <link rel="alternate" type="application/atom+xml" title="{{ site.title | escape }} feed" href="{{ '/feed.xml' | absolute_url }}">
+    <script>
+        (function () {
+            let stored = null;
+            try { stored = localStorage.getItem('theme'); } catch (error) {}
+            const theme = stored === 'light' || stored === 'dark' ? stored : 'dark';
+            document.documentElement.dataset.theme = theme;
+            document.documentElement.style.colorScheme = theme;
+            document.getElementById('theme-color').content = theme === 'light' ? '#e7f0e9' : '#07171e';
+        }());
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/styles.css?v=9">
+    <link rel="stylesheet" href="/assets/css/pond-theme.css?v=21">
+    {% if page.pond %}
+    <link rel="stylesheet" href="/assets/css/pond-experience.css?v=6">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.185.1/examples/jsm/"
+            }
+        }
+    </script>
+    {% endif %}
+    <link rel="icon" type="image/png" href="/assets/images/brand/favicon.png">
 </head>
-<body>
+<body class="{% if page.body_class %}{{ page.body_class }}{% elsif page.url == '/' %}home-page{% else %}article-page{% endif %}">
+    <div class="pond-wallpaper" aria-hidden="true">
+        {% if page.url == '/' %}
+        <video id="pond-video" muted loop playsinline preload="none" poster="/assets/video/pond-poster.jpg">
+            <source data-src="/assets/video/pond.mp4" type="video/mp4">
+        </video>
+        {% endif %}
+        <div class="pond-tint"></div>
+    </div>
+
+    <a class="skip-link" href="#main-content">Skip to the writing</a>
     {% include header.html %}
     {% include sidebar.html %}
 
-    <main class="main-content">
+    <main class="main-content" id="main-content">
         {{ content }}
+        {% include post-gallery.html %}
+        {% include portfolio-links.html %}
+        {% if page.pdf %}{% include pdf-launch.html %}{% endif %}
     </main>
 
+    {% if page.pdf %}{% include pdf-viewer.html %}{% endif %}
+    {% include audio-player.html %}
     {% include scripts.html %}
+    {% if page.pond %}
+    <script src="/assets/js/pond-fallback.js?v=4"></script>
+    <script type="module" src="/assets/js/pond-experience.js?v=11"></script>
+    {% endif %}
 </body>
 </html>

@@ -1,6 +1,8 @@
 ---
 title: "Velociraptor Rawr"
 date: 2025-11-22
+description: "A beginner-friendly Velociraptor guide for endpoint collection, VQL queries, DFIR investigations, and threat hunting."
+pond: true
 ---
 
 # Velociraptor? Dinosaur?

@@ -1,13 +1,16 @@
 title: 171k
 email: lanbuatkeje@gmail.com
-description: "My space to post what I learn toward my journey"
+description: "Cybersecurity projects, CTF challenges, forensic tools, and practical field notes by Razlan."
 baseurl: "" # keep empty for root
-url: "https://171k.github.io"
+url: "https://171k.my"
 markdown: kramdown
 theme: null
-exclude: ["node_modules", "README.md"]
+exclude: ["node_modules", "README.md", "scripts", "authoring", ".vscode", "Gemfile", "Gemfile.lock"]
 
 collections:
+  quacks:
+    output: true
+    permalink: /quacks/:name/
   ctf:
     output: true
     permalink: /ctf/:name/
@@ -18,17 +21,23 @@ collections:
   books:
     output: true
     permalink: /books/:title/
+  projects:
+    output: true
+    permalink: /projects/:title/
+  certifications:
+    output: true
+    permalink: /certifications/:title/
+  achievements:
+    output: true
+    permalink: /achievements/:title/
 
 keep_files: []
-include: ["_ctf/**/*", "assets/**/*", "**/*.ani", "**/*.cur"]
-
-# Fix posts permalink to avoid spaces in URLs - use date and title only
-permalink: /:year/:month/:day/:title/
+include: ["_pages", "_ctf/**/*", "assets/**/*", "**/*.ani", "**/*.cur"]
 
 defaults:
   - scope:
       path: ""
-      type: "posts"
+      type: "quacks"
     values:
       layout: "default"
   - scope:
@@ -44,5 +53,20 @@ defaults:
   - scope:
       path: ""
       type: "books"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "projects"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "certifications"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "achievements"
     values:
       layout: "default"

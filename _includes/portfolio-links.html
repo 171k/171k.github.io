@@ -1,0 +1,8 @@
+{% if page.repository or page.demo or page.credential or page.link %}
+<nav class="portfolio-links" aria-label="Related links">
+    {% if page.repository %}<a href="{{ page.repository }}" rel="noopener">Repository</a>{% endif %}
+    {% if page.demo %}<a href="{{ page.demo }}" rel="noopener">Live demo</a>{% endif %}
+    {% if page.credential %}<a href="{{ page.credential }}" rel="noopener">Verify credential</a>{% endif %}
+    {% if page.link %}<a href="{{ page.link }}" rel="noopener">View reference</a>{% endif %}
+</nav>
+{% endif %}

@@ -1,6 +1,8 @@
 ---
 title: "Apktool"
 date: 2024-05-01
+description: "A practical Apktool cheatsheet for decoding, editing, rebuilding, and signing Android applications during CTF challenges."
+pond: false
 ---
 
 # APKTool Cheatsheet

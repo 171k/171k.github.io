@@ -1,6 +1,8 @@
 ---
 title: "Wazuh Startup!"
 date: 2024-11-20
+description: "A quick Wazuh reference covering its core components, security monitoring workflow, SIEM usage, and common operations."
+pond: false
 ---
 
 # Wazuh!
@@ -11,15 +13,15 @@ Quick reference for using Wazuh for security monitoring and SIEM!
 
 ## 📦 Wazuh Components Overview
 
-- **Wazuh Manager** — Processes logs, runs rules, decoders.
+- **Wazuh Manager**: Processes logs, runs rules, decoders.
   
-- **Wazuh Agent** — Installed on endpoints; sends logs to manager.
+- **Wazuh Agent**: Installed on endpoints; sends logs to manager.
   
-- **Filebeat** — Sends alerts to Elasticsearch.
+- **Filebeat**: Sends alerts to Elasticsearch.
   
-- **Elasticsearch** — Stores and indexes alerts.
+- **Elasticsearch**: Stores and indexes alerts.
   
-- **Wazuh Dashboard** — GUI for searching/log analysis.
+- **Wazuh Dashboard**: GUI for searching/log analysis.
   
 
 ---

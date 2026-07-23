@@ -1,0 +1,19 @@
+{% if page.gallery %}
+{% assign gallery_files = site.static_files | where_exp: "file", "file.path contains page.gallery" | sort: "path" %}
+{% if gallery_files.size > 0 %}
+<section class="post-gallery" aria-labelledby="post-gallery-heading">
+    <h2 id="post-gallery-heading">{{ page.gallery_title | default: "Gallery" }}</h2>
+    <div class="post-gallery-grid">
+        {% for image in gallery_files %}
+        <figure>
+            <img
+                src="{{ image.path }}"
+                alt="{{ page.gallery_alt | default: page.title | escape }}, image {{ forloop.index }} of {{ forloop.length }}"
+                loading="lazy"
+                decoding="async">
+        </figure>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+{% endif %}
