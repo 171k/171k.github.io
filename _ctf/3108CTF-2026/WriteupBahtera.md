@@ -4,7 +4,7 @@ title: "Bahtera CTF 2026 Writeup"
 
 date: 2026-31-08
 
-permalink: /ctf/3108 CTF 2026/
+permalink: /ctf/3108CTF2026/
 
 categories: [ Writeup]
 
