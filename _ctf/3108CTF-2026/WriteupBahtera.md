@@ -1,5 +1,3 @@
-# 
-
 ---
 
 title: "Bahtera CTF 2026 Writeup"
