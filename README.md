@@ -56,13 +56,7 @@ Use `--featured` for any quack, project, certification, or achievement you want 
 
 Use `--pond` when creating an entry to place it in that collection's Duck Pond area. You can also set `pond: true` or `pond: false` directly in any content file. Each collection can have at most three entries marked `pond: true`; the content checker reports an error if the limit is exceeded.
 
-Complete copyable examples are also available at:
-
-- `_projects/EXAMPLE.md`
-- `_certifications/EXAMPLE.md`
-- `_achievements/EXAMPLE.md`
-
-These examples are visible on the website so you can see the completed card and detail-page layouts. Copy an example, give the new file a descriptive name, and replace its contents. Delete the example file whenever you no longer need it.
+Copyable templates for every content type live in `authoring/templates` (for example `project.md`, `certification.md` and `achievement.md`). Copy one into the matching collection folder, give it a descriptive name, and replace its contents.
 
 ## Add images
 

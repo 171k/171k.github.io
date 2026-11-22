@@ -311,6 +311,16 @@ function cloneModel(source) {
 
 async function loadModels() {
   const manager = new THREE.LoadingManager();
+  // The FBX files embed references to their original texture names, which are not
+  // shipped. Redirect them to the textures we do ship so they don't 404.
+  const embeddedTextures = {
+    'Pond_Plants_Atlas.tga': `${textureRoot}pond-plants-atlas.webp`,
+    'BaseColor.png': `${textureRoot}pond-props-base-color.png`
+  };
+  manager.setURLModifier((url) => {
+    const file = url.split('/').pop();
+    return embeddedTextures[file] || url;
+  });
   manager.onProgress = (url, loadedCount, totalCount) => {
     setLoading(`Loading pond pieces ${loadedCount} of ${totalCount}`);
   };
